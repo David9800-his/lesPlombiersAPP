@@ -2,8 +2,5 @@ services:
   - type: web
     name: lesplombiersapp
     env: python
-    buildCommand: ""
-    startCommand: "python agent_stats_hockey.py"
-    envVars:
-      - key: PORT
-        value: 10000
+    buildCommand: pip install -r requirements.txt
+    startCommand: python agent_stats_hockey.py
