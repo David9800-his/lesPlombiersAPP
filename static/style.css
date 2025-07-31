@@ -1,0 +1,16 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 2rem;
+    background: #f5f5f5;
+    color: #333;
+}
+h1, h2 {
+    color: #003366;
+}
+textarea {
+    width: 100%;
+    font-family: monospace;
+}
+.error {
+    color: red;
+}

@@ -1,1 +1,39 @@
-<!-- HTML stats cumulées -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Stats des joueurs - Les Plombiers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Classement cumulatif</h1>
+
+    <h2>Top 3 Buts</h2>
+    <ul>
+        {% for joueur, stats in top_buteurs %}
+            <li>{{ joueur }} : {{ stats.buts }} buts</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Top 3 Passes</h2>
+    <ul>
+        {% for joueur, stats in top_passeurs %}
+            <li>{{ joueur }} : {{ stats.passes }} passes</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Top 3 Points</h2>
+    <ul>
+        {% for joueur, stats in top_points %}
+            <li>{{ joueur }} : {{ stats.buts + stats.passes }} points</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Classement général</h2>
+    <ol>
+        {% for joueur, stats in classement %}
+            <li>{{ joueur }} - {{ stats.buts }} B | {{ stats.passes }} P</li>
+        {% endfor %}
+    </ol>
+</body>
+</html>

@@ -1,1 +1,36 @@
-<!-- HTML admin -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Les Plombiers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Interface Admin</h1>
+
+    {% if not session.logged_in %}
+        <form method="post">
+            <input type="password" name="password" placeholder="Mot de passe">
+            <button type="submit">Connexion</button>
+        </form>
+        {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    {% else %}
+        <form method="post">
+            <label for="date">Sélectionner une date :</label>
+            <select name="date">
+                {% for date in dates %}
+                    <option value="{{ date }}" {% if selected_date == date %}selected{% endif %}>{{ date }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <textarea name="commentaires" rows="10" cols="50">{{ commentaires }}</textarea><br><br>
+            <button type="submit">Soumettre</button>
+            <button name="reset" value="1">Réinitialiser les statistiques</button>
+        </form>
+
+        <a href="{{ url_for('logout') }}">Se déconnecter</a> |
+        <a href="{{ url_for('stats') }}">Voir les stats</a> |
+        <a href="{{ url_for('historique') }}">Historique des matchs</a>
+    {% endif %}
+</body>
+</html>

@@ -1,1 +1,22 @@
-<!-- HTML historique -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Historique - Les Plombiers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Historique des parties</h1>
+    {% for saison, dates in saisons.items() %}
+        <h2>Saison {{ saison }}</h2>
+        <ul>
+            {% for date in dates %}
+                <li>
+                    {{ date }}
+                    — <a href="{{ url_for('telecharger_csv', date=date) }}">Télécharger CSV</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</body>
+</html>
