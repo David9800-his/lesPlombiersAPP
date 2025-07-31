@@ -1,5 +1,3 @@
-# Agent IA de lecture des stats de hockey avec interface joueur et administrateur
-
 import re
 import os
 import json
@@ -10,7 +8,6 @@ from flask import Flask, request, render_template, redirect, url_for, session, R
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
-# --- Générer les mardis valides ---
 def generer_dates_matchs():
     debut, fin = datetime(2024, 9, 10), datetime(2025, 4, 29)
     return [debut.strftime('%Y-%m-%d') for debut in (debut + timedelta(days=i) for i in range((fin - debut).days + 1))
@@ -18,7 +15,6 @@ def generer_dates_matchs():
 
 DATES_MARDIS = generer_dates_matchs()
 
-# --- Extraction des stats ---
 def extraire_stats(texte):
     stats = defaultdict(lambda: {"buts": 0, "passes": 0})
     for ligne in texte.split("\n"):
@@ -29,9 +25,18 @@ def extraire_stats(texte):
             stats[nom.strip()]["passes"] += int(passes)
     return stats
 
-# --- Routes ---
-@app.route("/historique")
+@app.route("/historique", methods=["GET", "POST"])
 def historique():
+    if not session.get("logged_in"):
+        return redirect(url_for("admin"))
+
+    if request.method == "POST" and request.form.get("supprimer"):
+        date = request.form.get("supprimer")
+        json_path = f"matchs/match_{date}.json"
+        if os.path.exists(json_path):
+            os.remove(json_path)
+        return redirect(url_for("historique"))
+
     saisons = {f"{y}-{y+1}": [] for y in range(2022, 2026)}
     for f in sorted(os.listdir("matchs")):
         if f.startswith("match_") and f.endswith(".json"):

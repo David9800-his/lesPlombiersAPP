@@ -2,20 +2,25 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Historique - Les Plombiers</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Historique des parties</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Historique des parties</h1>
+    <h1>Historique des matchs</h1>
+    <a href="/">Retour à l'administration</a>
     {% for saison, dates in saisons.items() %}
         <h2>Saison {{ saison }}</h2>
         <ul>
-            {% for date in dates %}
-                <li>
-                    {{ date }}
-                    — <a href="{{ url_for('telecharger_csv', date=date) }}">Télécharger CSV</a>
-                </li>
-            {% endfor %}
+        {% for date in dates %}
+            <li>
+                {{ date }}
+                <form method="post" style="display:inline">
+                    <input type="hidden" name="supprimer" value="{{ date }}">
+                    <button type="submit" onclick="return confirm('Supprimer les statistiques du {{ date }} ?')">Supprimer</button>
+                </form>
+                <a href="/telecharger/{{ date }}">Télécharger CSV</a>
+            </li>
+        {% endfor %}
         </ul>
     {% endfor %}
 </body>
