@@ -108,4 +108,5 @@ def calculer_classement_general():
     return sorted(stats.items(), key=lambda item: item[1]['buts'] + item[1]['passes'], reverse=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
