@@ -3,34 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin - Les Plombiers</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Interface Admin</h1>
+    <h1>Interface administrateur</h1>
 
     {% if not session.logged_in %}
         <form method="post">
-            <input type="password" name="password" placeholder="Mot de passe">
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" name="password">
             <button type="submit">Connexion</button>
         </form>
-        {% if error %}<p class="error">{{ error }}</p>{% endif %}
+        {% if error %}<p style="color:red">{{ error }}</p>{% endif %}
     {% else %}
+        <p><a href="/logout">Se déconnecter</a></p>
         <form method="post">
-            <label for="date">Sélectionner une date :</label>
-            <select name="date">
-                {% for date in dates %}
-                    <option value="{{ date }}" {% if selected_date == date %}selected{% endif %}>{{ date }}</option>
+            <label for="date">Date du match :</label>
+            <select name="date" id="date">
+                {% for d in dates %}
+                    <option value="{{ d }}" {% if selected_date == d %}selected{% endif %}>{{ d }}</option>
                 {% endfor %}
-            </select><br><br>
-
-            <textarea name="commentaires" rows="10" cols="50">{{ commentaires }}</textarea><br><br>
-            <button type="submit">Soumettre</button>
-            <button name="reset" value="1">Réinitialiser les statistiques</button>
+            </select>
+            <br><br>
+            <textarea name="commentaires" rows="10" cols="50" placeholder="Coller ici les commentaires Facebook...">{{ commentaires }}</textarea><br>
+            <button type="submit">Enregistrer</button>
         </form>
+        {% if confirmation %}<p style="color:green">{{ confirmation }}</p>{% endif %}
+        {% if error %}<p style="color:red">{{ error }}</p>{% endif %}
 
-        <a href="{{ url_for('logout') }}">Se déconnecter</a> |
-        <a href="{{ url_for('stats') }}">Voir les stats</a> |
-        <a href="{{ url_for('historique') }}">Historique des matchs</a>
+        <h2>Classement général</h2>
+        <table>
+            <tr><th>Joueur</th><th>Buts</th><th>Passes</th><th>Points</th></tr>
+            {% for joueur, stats in classement %}
+                <tr>
+                    <td>{{ joueur }}</td>
+                    <td>{{ stats.buts }}</td>
+                    <td>{{ stats.passes }}</td>
+                    <td>{{ stats.buts + stats.passes }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <p><a href="/historique">Voir l'historique des matchs</a></p>
+        <p><a href="/stats">Voir les statistiques</a></p>
     {% endif %}
 </body>
 </html>

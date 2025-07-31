@@ -1,126 +1,110 @@
-import re
+from flask import Flask, render_template, request, redirect, session, send_file
 import os
 import json
-from collections import defaultdict
-from datetime import datetime, timedelta
-from flask import Flask, request, render_template, redirect, url_for, session, Response
+from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'
+app.secret_key = "Vanier"
 
-def generer_dates_matchs():
-    debut, fin = datetime(2024, 9, 10), datetime(2025, 4, 29)
-    return [debut.strftime('%Y-%m-%d') for debut in (debut + timedelta(days=i) for i in range((fin - debut).days + 1))
-            if debut.weekday() == 1 and not (debut.month == 12 and debut.day in [24, 31])]
+PASSWORD = "Vanier"
 
-DATES_MARDIS = generer_dates_matchs()
+# Liste des mardis entre le 10 septembre et le 29 avril, sauf 24 et 31 décembre
+def generer_dates_mardis():
+    debut = datetime(2024, 9, 10)
+    fin = datetime(2025, 4, 29)
+    jours = []
+    while debut <= fin:
+        if debut.weekday() == 1 and not (debut.month == 12 and debut.day in [24, 31]):
+            jours.append(debut.strftime("%Y-%m-%d"))
+        debut = debut.replace(day=debut.day + 1)
+        try:
+            debut = debut.replace(day=debut.day + 1)
+        except:
+            debut += timedelta(days=1)
+    return jours
 
+DATES_MARDIS = generer_dates_mardis()
+
+# Formater une date en format lisible (10 septembre 2024)
+def formater_date(date_str):
+    mois_fr = {
+        "01": "janvier", "02": "février", "03": "mars", "04": "avril",
+        "05": "mai", "06": "juin", "07": "juillet", "08": "août",
+        "09": "septembre", "10": "octobre", "11": "novembre", "12": "décembre"
+    }
+    an, mo, jo = date_str.split("-")
+    return f"{int(jo)} {mois_fr[mo]} {an}"
+
+# Analyse des commentaires (version simple)
 def extraire_stats(texte):
-    stats = defaultdict(lambda: {"buts": 0, "passes": 0})
-    for ligne in texte.split("\n"):
-        match = re.match(r"^(.*?)\s+(\d+)\s+buts?\s+(\d+)\s+passes?", ligne)
-        if match:
-            nom, buts, passes = match.groups()
-            stats[nom.strip()]["buts"] += int(buts)
-            stats[nom.strip()]["passes"] += int(passes)
+    stats = {}
+    lignes = texte.strip().split("\n")
+    for ligne in lignes:
+        if not ligne.strip():
+            continue
+        nom = ligne.split(" ")[0]
+        buts = ligne.lower().count("but")
+        passes = ligne.lower().count("passe")
+        if buts > 0 or passes > 0:
+            stats[nom] = {"buts": buts, "passes": passes}
     return stats
 
-@app.route("/historique", methods=["GET", "POST"])
-def historique():
-    if not session.get("logged_in"):
-        return redirect(url_for("admin"))
+def enregistrer_stats(date, stats):
+    os.makedirs("matchs", exist_ok=True)
+    with open(f"matchs/{date}.json", "w", encoding="utf-8") as f:
+        json.dump(stats, f, ensure_ascii=False, indent=2)
 
-    if request.method == "POST" and request.form.get("supprimer"):
-        date = request.form.get("supprimer")
-        json_path = f"matchs/match_{date}.json"
-        if os.path.exists(json_path):
-            os.remove(json_path)
-        return redirect(url_for("historique"))
-
-    saisons = {f"{y}-{y+1}": [] for y in range(2022, 2026)}
-    for f in sorted(os.listdir("matchs")):
-        if f.startswith("match_") and f.endswith(".json"):
-            date_str = f[6:-5]
-            try:
-                date = datetime.strptime(date_str, "%Y-%m-%d")
-                for s in saisons:
-                    y1, y2 = map(int, s.split("-"))
-                    if datetime(y1, 9, 1) <= date < datetime(y2, 9, 1):
-                        saisons[s].append(date_str)
-            except: pass
-    return render_template("historique.html", saisons=saisons)
-
-@app.route("/telecharger/<date>")
-def telecharger_csv(date):
-    path = f"matchs/match_{date}.json"
-    if not os.path.exists(path): return "Fichier introuvable", 404
-    with open(path, "r", encoding="utf-8") as f:
-        stats = json.load(f)
-    lignes = ["Nom,Buts,Passes"] + [f"{j},{s['buts']},{s['passes']}" for j, s in stats.items()]
-    return Response("\n".join(lignes), mimetype="text/csv",
-                    headers={"Content-Disposition": f"attachment;filename=stats_{date}.csv"})
+def calculer_stats_cumulees():
+    classement = {}
+    for date in DATES_MARDIS:
+        fichier = os.path.join("matchs", f"{date}.json")
+        if os.path.exists(fichier):
+            with open(fichier, "r", encoding="utf-8") as f:
+                stats = json.load(f)
+                for joueur, st in stats.items():
+                    if joueur not in classement:
+                        classement[joueur] = {"buts": 0, "passes": 0}
+                    classement[joueur]["buts"] += st.get("buts", 0)
+                    classement[joueur]["passes"] += st.get("passes", 0)
+    return classement
 
 @app.route("/", methods=["GET", "POST"])
 def admin():
-    commentaires, error = "", None
-    selected_date = request.form.get("date") or (DATES_MARDIS[0] if DATES_MARDIS else "")
-
-    if request.method == "POST" and not session.get("logged_in"):
-        if request.form.get("password") == "Vanier":
-            session["logged_in"] = True
-            return redirect(url_for("admin"))
-        error = "Mot de passe incorrect."
-
     if not session.get("logged_in"):
-        return render_template("admin.html", session=session, commentaires=commentaires, error=error,
-                               dates=DATES_MARDIS, selected_date=selected_date)
+        if request.method == "POST" and request.form.get("password") == PASSWORD:
+            session["logged_in"] = True
+            return redirect("/")
+        return render_template("admin.html", error="" if request.method == "GET" else "Mot de passe incorrect")
 
-    if request.method == "POST":
-        if request.form.get("reset") == "1":
-            [os.remove(f"matchs/{f}") for f in os.listdir("matchs") if f.startswith("match_")]
-            return redirect(url_for("admin"))
+    confirmation = None
+    error = None
+    classement = calculer_stats_cumulees()
+    selected_date = request.form.get("date") or (DATES_MARDIS[0] if DATES_MARDIS else "")
+    commentaires = ""
 
-        if request.form.get("commentaires"):
-            commentaires = request.form["commentaires"]
+    if request.method == "POST" and "commentaires" in request.form:
+        commentaires = request.form["commentaires"]
+        if commentaires.strip():
             stats = extraire_stats(commentaires)
-            if not selected_date:
-                error = "Veuillez sélectionner une date."
-            elif not stats:
-                error = "Aucune statistique détectée."
-            else:
-                os.makedirs("matchs", exist_ok=True)
-                with open(f"matchs/match_{selected_date}.json", "w", encoding="utf-8") as f:
-                    json.dump(stats, f, ensure_ascii=False, indent=2)
-                return redirect(url_for("stats"))
+            enregistrer_stats(selected_date, stats)
+            confirmation = f"Les statistiques ont été enregistrées pour la partie du {formater_date(selected_date)}."
+        else:
+            error = "Aucun commentaire valide détecté."
 
-    path = f"matchs/match_{selected_date}.json"
-    if selected_date and os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            commentaires = "\n".join([f"{j} : {v['buts']} buts, {v['passes']} passes" for j, v in json.load(f).items()])
-
-    return render_template("admin.html", session=session, commentaires=commentaires, error=error,
-                           dates=DATES_MARDIS, selected_date=selected_date)
-
-@app.route("/stats")
-def stats():
-    cumul = defaultdict(lambda: {"buts": 0, "passes": 0})
-    for f in os.listdir("matchs"):
-        if f.startswith("match_") and f.endswith(".json"):
-            with open(f"matchs/{f}", "r", encoding="utf-8") as fp:
-                for joueur, sp in json.load(fp).items():
-                    cumul[joueur]["buts"] += sp.get("buts", 0)
-                    cumul[joueur]["passes"] += sp.get("passes", 0)
-    classement = sorted(cumul.items(), key=lambda x: (-x[1]['buts'], -x[1]['passes'], x[0]))
-    return render_template("player.html", classement=classement,
-                           top_buteurs=sorted(cumul.items(), key=lambda x: -x[1]['buts'])[:3],
-                           top_passeurs=sorted(cumul.items(), key=lambda x: -x[1]['passes'])[:3],
-                           top_points=sorted(cumul.items(), key=lambda x: -(x[1]['buts'] + x[1]['passes']))[:3])
+    return render_template(
+        "admin.html",
+        dates=DATES_MARDIS,
+        commentaires=commentaires,
+        selected_date=selected_date,
+        confirmation=confirmation,
+        error=error,
+        classement=classement
+    )
 
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("admin"))
+    return redirect("/")
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(debug=True, host="0.0.0.0", port=port)
+    app.run(debug=True)
