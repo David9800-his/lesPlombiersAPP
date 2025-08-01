@@ -1,123 +1,91 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session, send_file
 import os
 import json
+import csv
 from datetime import datetime, timedelta
-from collections import defaultdict
 
 app = Flask(__name__)
-app.secret_key = 'votre_clé_secrète'
+app.secret_key = 'votre_cle_secrete'
 
 PASSWORD = "plomberie"
-DOSSIER_JSON = "matchs"
+DOSSIER_MATCHS = "matchs"
 
-# Créer le dossier s'il n'existe pas
-if not os.path.exists(DOSSIER_JSON):
-    os.makedirs(DOSSIER_JSON)
-
-def generer_dates_mardis():
-    debut = datetime(2024, 9, 10)
-    fin = datetime(2025, 4, 29)
+# Génère les dates de match du mardi entre deux dates données
+def generer_dates_mardi(debut, fin):
     dates = []
-    while debut <= fin:
-        if debut.weekday() == 1:
-            dates.append(debut.strftime("%d %B %Y"))
-        debut += timedelta(days=1)
+    date = debut
+    while date <= fin:
+        if date.weekday() == 1 and not (date.month == 12 and date.day in [24, 31]):
+            dates.append(date.strftime("%Y-%m-%d"))
+        date += timedelta(days=1)
     return dates
 
-DATES_MARDIS = generer_dates_mardis()
+DATES_MARDIS = generer_dates_mardi(datetime(2024, 9, 10), datetime(2025, 4, 29))
 
-@app.route('/', methods=['GET', 'POST'])
+# Classement général calculé dynamiquement
+def calculer_classement():
+    stats = {}
+    for fichier in os.listdir(DOSSIER_MATCHS):
+        if fichier.endswith(".json"):
+            with open(os.path.join(DOSSIER_MATCHS, fichier), 'r') as f:
+                data = json.load(f)
+                for joueur, s in data.items():
+                    if joueur not in stats:
+                        stats[joueur] = {"buts": 0, "passes": 0}
+                    stats[joueur]["buts"] += s.get("buts", 0)
+                    stats[joueur]["passes"] += s.get("passes", 0)
+    # Trier par points
+    return sorted(stats.items(), key=lambda x: x[1]['buts'] + x[1]['passes'], reverse=True)
+
+@app.route("/", methods=["GET", "POST"])
 def admin():
-    if not session.get('logged_in'):
-        error = None
-        if request.method == 'POST':
-            if request.form['password'] == PASSWORD:
-                session['logged_in'] = True
-                return redirect(url_for('admin'))
-            else:
-                error = "Mot de passe incorrect"
-        return render_template("admin.html", error=error)
-
-    confirmation = None
     error = None
+    confirmation = None
     selected_date = request.form.get("date") or (DATES_MARDIS[0] if DATES_MARDIS else "")
-    commentaires = ""
 
-    if request.method == 'POST':
-        selected_date = request.form['date']
-        commentaires = request.form['commentaires']
-        joueurs = []
-        for i in range(1, 21):
-            nom = request.form.get(f"joueur_{i}")
-            buts = request.form.get(f"buts_{i}")
-            passes = request.form.get(f"passes_{i}")
-            if nom:
-                joueurs.append({
-                    "nom": nom,
-                    "buts": int(buts) if buts else 0,
-                    "passes": int(passes) if passes else 0
-                })
-        if selected_date:
-            nom_fichier = os.path.join(DOSSIER_JSON, f"{selected_date}.json")
-            with open(nom_fichier, 'w', encoding='utf-8') as f:
-                json.dump({"commentaires": commentaires, "joueurs": joueurs}, f, ensure_ascii=False, indent=2)
-            confirmation = f"Statistiques enregistrées pour la partie du {selected_date}"
+    if not session.get("logged_in"):
+        if request.method == "POST" and request.form.get("password") == PASSWORD:
+            session["logged_in"] = True
+        elif request.method == "POST":
+            error = "Mot de passe incorrect."
+        return render_template("admin.html", error=error, dates=DATES_MARDIS, selected_date=selected_date)
 
-    classement = calculer_classement_general()
-    return render_template("admin.html", dates=DATES_MARDIS, selected_date=selected_date, commentaires=commentaires, confirmation=confirmation, classement=classement)
+    if request.method == "POST" and 'csv_file' in request.files:
+        f = request.files['csv_file']
+        if not f:
+            error = "Aucun fichier CSV fourni."
+        else:
+            stats_match = {}
+            try:
+                contenu = f.read().decode("utf-8").splitlines()
+                reader = csv.DictReader(contenu)
+                for row in reader:
+                    nom = row['Nom'].strip()
+                    buts = int(row['Buts'])
+                    passes = int(row['Passes'])
+                    stats_match[nom] = {"buts": buts, "passes": passes}
 
-@app.route('/logout')
+                fichier_json = os.path.join(DOSSIER_MATCHS, f"{selected_date}.json")
+                with open(fichier_json, 'w') as fout:
+                    json.dump(stats_match, fout, indent=2, ensure_ascii=False)
+
+                # Formater la date en format lisible
+                date_obj = datetime.strptime(selected_date, "%Y-%m-%d")
+                date_formatee = date_obj.strftime("%-d %B %Y")
+                confirmation = f"Les statistiques ont été enregistrées pour la partie du {date_formatee}."
+
+            except Exception as e:
+                error = f"Erreur lors du traitement du CSV : {str(e)}"
+
+    classement = calculer_classement()
+    return render_template("admin.html", error=error, confirmation=confirmation, dates=DATES_MARDIS, selected_date=selected_date, classement=classement)
+
+@app.route("/logout")
 def logout():
-    session['logged_in'] = False
-    return redirect(url_for('admin'))
+    session.pop("logged_in", None)
+    return redirect("/")
 
-@app.route('/stats')
-def stats():
-    classement = calculer_classement_general()
-    return render_template("player.html", classement=classement)
-
-@app.route('/historique')
-def historique():
-    if not session.get('logged_in'):
-        return redirect(url_for('admin'))
-
-    fichiers = sorted(os.listdir(DOSSIER_JSON))
-    fichiers = [f for f in fichiers if f.endswith('.json')]
-    parties = []
-    for fichier in fichiers:
-        chemin = os.path.join(DOSSIER_JSON, fichier)
-        with open(chemin, 'r', encoding='utf-8') as f:
-            contenu = json.load(f)
-        parties.append({
-            "nom": fichier.replace(".json", ""),
-            "commentaires": contenu.get("commentaires", "")
-        })
-    return render_template("historique.html", parties=parties)
-
-@app.route('/supprimer/<nom_partie>')
-def supprimer(nom_partie):
-    if not session.get('logged_in'):
-        return redirect(url_for('admin'))
-    chemin = os.path.join(DOSSIER_JSON, f"{nom_partie}.json")
-    if os.path.exists(chemin):
-        os.remove(chemin)
-    return redirect(url_for('historique'))
-
-def calculer_classement_general():
-    stats = defaultdict(lambda: {"buts": 0, "passes": 0})
-    fichiers = sorted(os.listdir(DOSSIER_JSON))
-    fichiers = [f for f in fichiers if f.endswith('.json')]
-    for fichier in fichiers:
-        chemin = os.path.join(DOSSIER_JSON, fichier)
-        with open(chemin, 'r', encoding='utf-8') as f:
-            contenu = json.load(f)
-        joueurs = contenu.get("joueurs", [])
-        for joueur in joueurs:
-            nom = joueur['nom']
-            stats[nom]['buts'] += joueur.get('buts', 0)
-            stats[nom]['passes'] += joueur.get('passes', 0)
-    return sorted(stats.items(), key=lambda item: item[1]['buts'] + item[1]['passes'], reverse=True)
-
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+if __name__ == "__main__":
+    if not os.path.exists(DOSSIER_MATCHS):
+        os.makedirs(DOSSIER_MATCHS)
+    app.run(debug=True)
