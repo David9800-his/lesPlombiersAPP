@@ -101,7 +101,8 @@ def admin():
                 error = f"Erreur lors du traitement du CSV : {str(e)}"
 
     classement = calculer_classement_general()
-    return render_template("admin.html", ..., classement=classement.items())
+    return render_template("admin.html", dates=DATES_MARDIS, selected_date=selected_date, classement=classement.items(), confirmation=confirmation)
+
 
 dates=DATES_MARDIS, selected_date=selected_date, classement=classement)
 
