@@ -46,11 +46,22 @@ def admin():
     if request.method == 'POST':
         selected_date = request.form['date']
         commentaires = request.form['commentaires']
+        joueurs = []
+        for i in range(1, 21):
+            nom = request.form.get(f"joueur_{i}")
+            buts = request.form.get(f"buts_{i}")
+            passes = request.form.get(f"passes_{i}")
+            if nom:
+                joueurs.append({
+                    "nom": nom,
+                    "buts": int(buts) if buts else 0,
+                    "passes": int(passes) if passes else 0
+                })
         if selected_date:
             nom_fichier = os.path.join(DOSSIER_JSON, f"{selected_date}.json")
             with open(nom_fichier, 'w', encoding='utf-8') as f:
-                json.dump({"commentaires": commentaires}, f)
-            confirmation = f"Commentaires enregistrés pour la partie du {selected_date}"
+                json.dump({"commentaires": commentaires, "joueurs": joueurs}, f, ensure_ascii=False, indent=2)
+            confirmation = f"Statistiques enregistrées pour la partie du {selected_date}"
 
     classement = calculer_classement_general()
     return render_template("admin.html", dates=DATES_MARDIS, selected_date=selected_date, commentaires=commentaires, confirmation=confirmation, classement=classement)
@@ -107,9 +118,6 @@ def calculer_classement_general():
             stats[nom]['passes'] += joueur.get('passes', 0)
     return sorted(stats.items(), key=lambda item: item[1]['buts'] + item[1]['passes'], reverse=True)
 
-import os
-
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-

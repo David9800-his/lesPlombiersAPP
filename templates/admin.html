@@ -2,50 +2,69 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Les Plombiers</title>
+    <title>Interface Administrateur</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Interface administrateur</h1>
+    <h1>Interface Administrateur</h1>
+
+    {% if error %}<p style="color:red">{{ error }}</p>{% endif %}
+    {% if confirmation %}<p style="color:green">{{ confirmation }}</p>{% endif %}
 
     {% if not session.logged_in %}
-        <form method="post">
-            <label for="password">Mot de passe :</label>
-            <input type="password" id="password" name="password">
-            <button type="submit">Connexion</button>
-        </form>
-        {% if error %}<p style="color:red">{{ error }}</p>{% endif %}
+    <form method="post">
+        <input type="password" name="password" placeholder="Mot de passe">
+        <button type="submit">Connexion</button>
+    </form>
     {% else %}
-        <p><a href="/logout">Se déconnecter</a></p>
-        <form method="post">
-            <label for="date">Date du match :</label>
-            <select name="date" id="date">
-                {% for d in dates %}
-                    <option value="{{ d }}" {% if selected_date == d %}selected{% endif %}>{{ d }}</option>
-                {% endfor %}
-            </select>
-            <br><br>
-            <textarea name="commentaires" rows="10" cols="50" placeholder="Coller ici les commentaires Facebook...">{{ commentaires }}</textarea><br>
-            <button type="submit">Enregistrer</button>
-        </form>
-        {% if confirmation %}<p style="color:green">{{ confirmation }}</p>{% endif %}
-        {% if error %}<p style="color:red">{{ error }}</p>{% endif %}
 
-        <h2>Classement général</h2>
-        <table>
-            <tr><th>Joueur</th><th>Buts</th><th>Passes</th><th>Points</th></tr>
-            {% for joueur, stats in classement %}
-                <tr>
-                    <td>{{ joueur }}</td>
-                    <td>{{ stats.buts }}</td>
-                    <td>{{ stats.passes }}</td>
-                    <td>{{ stats.buts + stats.passes }}</td>
-                </tr>
+    <form method="post">
+        <label for="date">Sélectionnez la date :</label>
+        <select name="date">
+            {% for date in dates %}
+                <option value="{{ date }}" {% if selected_date == date %}selected{% endif %}>{{ date }}</option>
             {% endfor %}
-        </table>
+        </select>
 
-        <p><a href="/historique">Voir l'historique des matchs</a></p>
-        <p><a href="/stats">Voir les statistiques</a></p>
+        <h2>Statistiques des joueurs</h2>
+        {% for i in range(1, 21) %}
+            <div style="margin-bottom: 10px;">
+                <input type="text" name="joueur_{{ i }}" placeholder="Nom joueur {{ i }}">
+                <input type="number" name="buts_{{ i }}" placeholder="Buts">
+                <input type="number" name="passes_{{ i }}" placeholder="Passes">
+            </div>
+        {% endfor %}
+
+        <label for="commentaires">Commentaires :</label><br>
+        <textarea name="commentaires" rows="4" cols="50">{{ commentaires }}</textarea><br><br>
+
+        <button type="submit">Soumettre les statistiques</button>
+    </form>
+
+    <h2>Classement Général</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Buts</th>
+                <th>Passes</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for joueur, stats in classement %}
+            <tr>
+                <td>{{ joueur }}</td>
+                <td>{{ stats.buts }}</td>
+                <td>{{ stats.passes }}</td>
+                <td>{{ stats.buts + stats.passes }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p><a href="/logout">Déconnexion</a></p>
+
     {% endif %}
 </body>
 </html>
