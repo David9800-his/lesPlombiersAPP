@@ -88,4 +88,5 @@ def logout():
 if __name__ == "__main__":
     if not os.path.exists(DOSSIER_MATCHS):
         os.makedirs(DOSSIER_MATCHS)
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Utilise le port de Render, ou 5000 en local
+    app.run(debug=True, host="0.0.0.0", port=port)
