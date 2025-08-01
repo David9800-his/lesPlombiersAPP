@@ -2,7 +2,10 @@ from flask import Flask, render_template, request, redirect, session, send_file
 import os
 import json
 import csv
-from datetime import datetime, timedelta
+import csv
+from collections import defaultdict
+
+from datetime import datetime, timedelta 
 
 app = Flask(__name__)
 app.secret_key = 'votre_cle_secrete'
@@ -21,6 +24,26 @@ def generer_dates_mardi(debut, fin):
     return dates
 
 DATES_MARDIS = generer_dates_mardi(datetime(2024, 9, 10), datetime(2025, 4, 29))
+
+# Fonction pour lire tous les fichiers CSV et cumuler les statistiques :
+def calculer_classement_general():
+    classement = defaultdict(lambda: {'buts': 0, 'passes': 0})
+
+    if not os.path.exists(DOSSIER_MATCHS):
+        return classement  # Dossier inexistant
+
+    for fichier in os.listdir(DOSSIER_MATCHS):
+        if fichier.endswith('.csv'):
+            chemin = os.path.join(DOSSIER_MATCHS, fichier)
+            with open(chemin, newline='', encoding='utf-8') as csvfile:
+                lecteur = csv.DictReader(csvfile)
+                for ligne in lecteur:
+                    nom = ligne.get('Nom', '').strip()
+                    buts = int(ligne.get('Buts', 0))
+                    passes = int(ligne.get('Passes', 0))
+                    classement[nom]['buts'] += buts
+                    classement[nom]['passes'] += passes
+    return classement
 
 # Classement général calculé dynamiquement
 def calculer_classement():
@@ -77,8 +100,10 @@ def admin():
             except Exception as e:
                 error = f"Erreur lors du traitement du CSV : {str(e)}"
 
-    classement = calculer_classement()
-    return render_template("admin.html", error=error, confirmation=confirmation, dates=DATES_MARDIS, selected_date=selected_date, classement=classement)
+    classement = calculer_classement_general()
+    return render_template("admin.html", ..., classement=classement.items())
+
+dates=DATES_MARDIS, selected_date=selected_date, classement=classement)
 
 @app.route("/logout")
 def logout():
