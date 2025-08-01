@@ -107,6 +107,9 @@ def calculer_classement_general():
             stats[nom]['passes'] += joueur.get('passes', 0)
     return sorted(stats.items(), key=lambda item: item[1]['buts'] + item[1]['passes'], reverse=True)
 
+import os
+
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 
