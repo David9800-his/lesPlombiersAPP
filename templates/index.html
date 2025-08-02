@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Les Plombiers - Stats de Hockey 1990</title>
+  <style>
+    body {
+      background-image: url('https://www.transparenttextures.com/patterns/old-wall.png');
+      font-family: "Courier New", Courier, monospace;
+      color: #FFFFFF;
+      background-color: #003366;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      background-color: #000080;
+      color: #00FFFF;
+      text-align: center;
+      padding: 10px;
+      font-size: 28px;
+      text-shadow: 2px 2px black;
+    }
+    .navbar {
+      background-color: #0066CC;
+      padding: 5px;
+      text-align: center;
+    }
+    .navbar a {
+      color: #FFFF00;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .main {
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border: 2px solid #00FFFF;
+      background-color: #000033;
+      color: white;
+      font-size: 16px;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #00CCCC;
+      padding: 8px;
+      text-align: center;
+    }
+    .gif90s {
+      display: block;
+      margin: 10px auto;
+    }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 40px;
+      color: #AAAAAA;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🏒 Les Plombiers - Ligue de Ringuette et Hockey 1990 🥅</h1>
+
+  <div class="navbar">
+    <a href="{{ url_for('index') }}">Accueil</a>
+    <a href="#classement">Classement</a>
+    <a href="#souvenirs">Souvenirs</a>
+    <a href="/admin">Connexion Admin</a>
+  </div>
+
+  <img src="https://media.giphy.com/media/8YutMatqkTfSE/giphy.gif" class="gif90s" alt="Hockey 90s GIF" width="100">
+
+  <div class="main" id="classement">
+    <h2>Classement des joueurs</h2>
+    <table>
+      <tr>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Buts</th>
+        <th>Passes</th>
+      </tr>
+      {% for joueur, stats in classement.items() %}
+      <tr>
+        <td>{{ joueur.split(",")[0] }}</td>
+        <td>{{ joueur.split(",")[1] }}</td>
+        <td>{{ stats.buts }}</td>
+        <td>{{ stats.passes }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <h2 id="souvenirs">Souvenir du vestiaire</h2>
+    <p>« J’ai jamais vu un tir comme ça depuis les finales de 1993. » — Coach Réjean</p>
+    <p>« Amène ta poche, pis ferme ta gueule. » — Serge Prévost</p>
+  </div>
+
+  <img src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif" class="gif90s" alt="Old Hockey GIF" width="120">
+
+  <footer>
+    Site optimisé pour Netscape Navigator 3.0 — Dernière mise à jour : août 1997
+  </footer>
+
+</body>
+</html>
