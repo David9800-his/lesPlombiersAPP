@@ -1,118 +1,39 @@
-from flask import Flask, render_template, request, redirect, session, send_file
+
+from flask import Flask, render_template
 import os
-import json
-import csv
 import csv
 from collections import defaultdict
 
-from datetime import datetime, timedelta 
-
 app = Flask(__name__)
-app.secret_key = 'votre_cle_secrete'
-
-PASSWORD = "plomberie"
 DOSSIER_MATCHS = "matchs"
 
-# Génère les dates de match du mardi entre deux dates données
-def generer_dates_mardi(debut, fin):
-    dates = []
-    date = debut
-    while date <= fin:
-        if date.weekday() == 1 and not (date.month == 12 and date.day in [24, 31]):
-            dates.append(date.strftime("%Y-%m-%d"))
-        date += timedelta(days=1)
-    return dates
-
-DATES_MARDIS = generer_dates_mardi(datetime(2024, 9, 10), datetime(2025, 4, 29))
-
-# Fonction pour lire tous les fichiers CSV et cumuler les statistiques :
 def calculer_classement_general():
-    classement = defaultdict(lambda: {'buts': 0, 'passes': 0})
-
-    if not os.path.exists(DOSSIER_MATCHS):
-        return classement  # Dossier inexistant
-
-    for fichier in os.listdir(DOSSIER_MATCHS):
-        if fichier.endswith('.csv'):
-            chemin = os.path.join(DOSSIER_MATCHS, fichier)
-            with open(chemin, newline='', encoding='utf-8') as csvfile:
-                lecteur = csv.DictReader(csvfile)
-                for ligne in lecteur:
-                    nom = ligne.get('Nom', '').strip()
-                    buts = int(ligne.get('Buts', 0))
-                    passes = int(ligne.get('Passes', 0))
-                    classement[nom]['buts'] += buts
-                    classement[nom]['passes'] += passes
+    classement = defaultdict(lambda: {"buts": 0, "passes": 0})
+    for nom_fichier in os.listdir(DOSSIER_MATCHS):
+        if nom_fichier.endswith(".csv"):
+            with open(os.path.join(DOSSIER_MATCHS, nom_fichier), encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    nom = row.get("Nom", "").strip()
+                    prenom = row.get("Prénom", "").strip()
+                    if not nom or not prenom:
+                        continue
+                    joueur = f"{nom},{prenom}"
+                    classement[joueur]["buts"] += int(row.get("Buts", 0))
+                    classement[joueur]["passes"] += int(row.get("Passes", 0))
     return classement
 
-# Classement général calculé dynamiquement
-def calculer_classement():
-    stats = {}
-    for fichier in os.listdir(DOSSIER_MATCHS):
-        if fichier.endswith(".json"):
-            with open(os.path.join(DOSSIER_MATCHS, fichier), 'r') as f:
-                data = json.load(f)
-                for joueur, s in data.items():
-                    if joueur not in stats:
-                        stats[joueur] = {"buts": 0, "passes": 0}
-                    stats[joueur]["buts"] += s.get("buts", 0)
-                    stats[joueur]["passes"] += s.get("passes", 0)
-    # Trier par points
-    return sorted(stats.items(), key=lambda x: x[1]['buts'] + x[1]['passes'], reverse=True)
-
-@app.route("/", methods=["GET", "POST"])
-def admin():
-    error = None
-    confirmation = None
-    selected_date = request.form.get("date") or (DATES_MARDIS[0] if DATES_MARDIS else "")
-
-    if not session.get("logged_in"):
-        if request.method == "POST" and request.form.get("password") == PASSWORD:
-            session["logged_in"] = True
-        elif request.method == "POST":
-            error = "Mot de passe incorrect."
-        return render_template("admin.html", error=error, dates=DATES_MARDIS, selected_date=selected_date)
-
-    if request.method == "POST" and 'csv_file' in request.files:
-        f = request.files['csv_file']
-        if not f:
-            error = "Aucun fichier CSV fourni."
-        else:
-            stats_match = {}
-            try:
-                contenu = f.read().decode("utf-8").splitlines()
-                reader = csv.DictReader(contenu)
-                for row in reader:
-                    nom = row['Nom'].strip()
-                    buts = int(row['Buts'])
-                    passes = int(row['Passes'])
-                    stats_match[nom] = {"buts": buts, "passes": passes}
-
-                fichier_json = os.path.join(DOSSIER_MATCHS, f"{selected_date}.json")
-                with open(fichier_json, 'w') as fout:
-                    json.dump(stats_match, fout, indent=2, ensure_ascii=False)
-
-                # Formater la date en format lisible
-                date_obj = datetime.strptime(selected_date, "%Y-%m-%d")
-                date_formatee = date_obj.strftime("%-d %B %Y")
-                confirmation = f"Les statistiques ont été enregistrées pour la partie du {date_formatee}."
-
-            except Exception as e:
-                error = f"Erreur lors du traitement du CSV : {str(e)}"
-
+@app.route("/")
+def index():
     classement = calculer_classement_general()
-    return render_template("admin.html", dates=DATES_MARDIS, selected_date=selected_date, classement=classement.items(), confirmation=confirmation)
+    return render_template("index.html", classement=classement)
 
-
-dates=DATES_MARDIS, selected_date=selected_date, classement=classement)
-
-@app.route("/logout")
-def logout():
-    session.pop("logged_in", None)
-    return redirect("/")
+@app.route("/admin")
+def admin():
+    return "<p>Admin à venir</p>"
 
 if __name__ == "__main__":
     if not os.path.exists(DOSSIER_MATCHS):
         os.makedirs(DOSSIER_MATCHS)
-    port = int(os.environ.get("PORT", 5000))  # Utilise le port de Render, ou 5000 en local
+    port = int(os.environ.get("PORT", 5000))
     app.run(debug=True, host="0.0.0.0", port=port)
