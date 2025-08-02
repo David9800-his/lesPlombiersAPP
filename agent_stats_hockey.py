@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template
 import os
 import csv
@@ -27,10 +26,6 @@ def calculer_classement_general():
 def index():
     classement = calculer_classement_general()
     return render_template("index.html", classement=classement)
-
-@app.route("/admin")
-def admin():
-    return "<p>Admin à venir</p>"
 
 if __name__ == "__main__":
     if not os.path.exists(DOSSIER_MATCHS):
