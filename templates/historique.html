@@ -2,26 +2,335 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Historique des parties</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des matches - Les Plombiers Hockey</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #003366, #004488);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .season-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .season-title {
+            color: #003366;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #003366;
+        }
+        
+        .match-list {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .match-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #003366;
+            transition: all 0.3s ease;
+        }
+        
+        .match-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .match-date {
+            font-weight: bold;
+            color: #003366;
+            font-size: 1.1rem;
+        }
+        
+        .match-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-download {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-download:hover {
+            background: #218838;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        
+        .no-matches {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .stats-summary {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .match-item {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .match-actions {
+                justify-content: center;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Historique des matchs</h1>
-    <a href="/">Retour à l'administration</a>
-    {% for saison, dates in saisons.items() %}
-        <h2>Saison {{ saison }}</h2>
-        <ul>
-        {% for date in dates %}
-            <li>
-                {{ date }}
-                <form method="post" style="display:inline">
-                    <input type="hidden" name="supprimer" value="{{ date }}">
-                    <button type="submit" onclick="return confirm('Supprimer les statistiques du {{ date }} ?')">Supprimer</button>
-                </form>
-                <a href="/telecharger/{{ date }}">Télécharger CSV</a>
-            </li>
+    <div class="container">
+        <!-- En-tête -->
+        <div class="header">
+            <h1>📅 Historique des matches</h1>
+            <p>Consultation et gestion des matches de la saison</p>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="nav-menu">
+            <a href="{{ url_for('admin') }}" class="nav-link">🏠 Administration</a>
+            <a href="{{ url_for('accueil') }}" class="nav-link">📊 Statistiques</a>
+            <a href="{{ url_for('carousel_joueurs') }}" class="nav-link">🎠 Carrousel</a>
+        </div></a>
+            <a href="{{ url_for('stats_publiques') }}" class="nav-link">📊 Statistiques</a>
+            <a href="{{ url_for('carousel_joueurs') }}" class="nav-link">🎠 Carrousel</a>
+        </div>
+        
+        <!-- Messages Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'error' if category == 'error' else 'success' if category == 'success' else 'info' }}">
+            {{ message }}
+        </div>
         {% endfor %}
-        </ul>
-    {% endfor %}
+        {% endif %}
+        {% endwith %}
+        
+        <!-- Statistiques générales -->
+        {% if saisons %}
+        {% set total_matches = saisons.values() | sum(attribute='|length') | sum %}
+        <div class="stats-summary">
+            <h3>📊 Résumé de la saison</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">{{ total_matches }}</span>
+                    <span class="stat-label">Matches joués</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ saisons|length }}</span>
+                    <span class="stat-label">Saisons</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ moment().format('MMM YYYY') if moment else 'Avril 2025' }}</span>
+                    <span class="stat-label">Dernière activité</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Matches par saison -->
+        {% if saisons %}
+        {% for saison, dates in saisons.items() %}
+        <div class="season-section">
+            <h2 class="season-title">🏒 Saison {{ saison }}</h2>
+            
+            {% if dates %}
+            <div class="match-list">
+                {% for date in dates %}
+                <div class="match-item">
+                    <div class="match-info">
+                        <div class="match-date">📅 {{ date }}</div>
+                        <div style="color: #666; font-size: 0.9rem; margin-top: 0.2rem;">
+                            {% set date_obj = moment(date) if moment else None %}
+                            {% if date_obj %}
+                            {{ date_obj.format('dddd DD MMMM YYYY') }}
+                            {% else %}
+                            Match de hockey
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="match-actions">
+                        <a href="{{ url_for('telecharger_csv', date=date) }}" 
+                           class="btn-small btn-download" 
+                           title="Télécharger les statistiques en CSV">
+                            📄 CSV
+                        </a>
+                        
+                        <form method="post" style="display: inline;" 
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer les statistiques du {{ date }} ? Cette action est irréversible.')">
+                            <input type="hidden" name="supprimer" value="{{ date }}">
+                            <button type="submit" 
+                                    class="btn-small btn-delete" 
+                                    title="Supprimer ce match">
+                                🗑️ Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-matches">
+                <p>Aucun match enregistré pour cette saison</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        {% else %}
+        <div class="season-section">
+            <div class="no-matches">
+                <h3>📂 Aucun match trouvé</h3>
+                <p>Aucun match n'a encore été enregistré dans le système.</p>
+                <p>Utilisez l'interface d'administration pour ajouter des matches.</p>
+                <div style="margin-top: 2rem;">
+                    <a href="{{ url_for('admin') }}" class="btn">➕ Ajouter un match</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Instructions -->
+        <div class="season-section" style="background: #e3f2fd; border-left-color: #2196f3;">
+            <h3 style="color: #1976d2;">💡 Instructions</h3>
+            <ul style="color: #1565c0; line-height: 1.6;">
+                <li><strong>📄 CSV</strong> : Télécharge les statistiques du match au format CSV</li>
+                <li><strong>🗑️ Supprimer</strong> : Supprime définitivement les données du match</li>
+                <li><strong>📅 Dates</strong> : Les matches sont organisés par saison hockey (septembre à avril)</li>
+                <li><strong>🔒 Sécurité</strong> : Seuls les administrateurs peuvent accéder à cette page</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Animation d'apparition
+        document.addEventListener('DOMContentLoaded', function() {
+            const items = document.querySelectorAll('.match-item');
+            
+            items.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'all 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+        
+        // Confirmation de suppression avec détails
+        document.querySelectorAll('form[onsubmit]').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const date = this.querySelector('input[name="supprimer"]').value;
+                const confirmation = confirm(
+                    `⚠️ ATTENTION ⚠️\n\n` +
+                    `Vous êtes sur le point de supprimer définitivement ` +
+                    `les statistiques du match du ${date}.\n\n` +
+                    `Cette action est IRRÉVERSIBLE.\n\n` +
+                    `Êtes-vous absolument certain de vouloir continuer ?`
+                );
+                
+                if (!confirmation) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

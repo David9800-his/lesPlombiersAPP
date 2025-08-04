@@ -1,1 +1,38 @@
-{}
+{
+  "Hugo Ferland": {
+    "buts": 2,
+    "passes": 2
+  },
+  "David Rémillard": {
+    "buts": 2,
+    "passes": 1
+  },
+  "Simon Djcooleur Tremblay": {
+    "buts": 1,
+    "passes": 1
+  },
+  "Jean-Dominique Hamel": {
+    "buts": 0,
+    "passes": 2
+  },
+  "Nicolas Savard": {
+    "buts": 0,
+    "passes": 1
+  },
+  "Simon Kearney": {
+    "buts": 0,
+    "passes": 1
+  },
+  "Dave Jolicoeur": {
+    "buts": 0,
+    "passes": 1
+  },
+  "Nicolas Gémus": {
+    "buts": 0,
+    "passes": 0
+  },
+  "Mathieu Rivard": {
+    "buts": 1,
+    "passes": 1
+  }
+}

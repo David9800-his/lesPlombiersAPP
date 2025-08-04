@@ -1,1 +1,30 @@
-{}
+{
+  "Jean-Dominique Hamel": {
+    "buts": 4,
+    "passes": 0
+  },
+  "Hugo Ferland": {
+    "buts": 2,
+    "passes": 0
+  },
+  "Alex Boutin": {
+    "buts": 0,
+    "passes": 3
+  },
+  "Simon Djcooleur Tremblay": {
+    "buts": 0,
+    "passes": 2
+  },
+  "Simon Kearney": {
+    "buts": 0,
+    "passes": 1
+  },
+  "Gregory Belanger": {
+    "buts": 0,
+    "passes": 1
+  },
+  "Nicolas Lahaye": {
+    "buts": 0,
+    "passes": 1
+  }
+}

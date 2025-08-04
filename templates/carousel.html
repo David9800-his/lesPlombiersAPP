@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrousel Joueurs - Les Plombiers Hockey</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .carousel-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            background: rgba(0, 51, 102, 0.9);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .carousel-nav:hover {
+            background: rgba(0, 51, 102, 1);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+        }
+        
+        .carousel-nav.prev {
+            left: 30px;
+        }
+        
+        .carousel-nav.next {
+            right: 30px;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .control-button {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: #003366;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .control-button:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: #003366;
+        }
+        
+        .player-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            max-width: 1100px;
+            width: 90%;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .player-header {
+            background: linear-gradient(135deg, #003366, #004488);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .player-header::before {
+            content: "🏒";
+            position: absolute;
+            font-size: 120px;
+            opacity: 0.1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .player-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin: 0 auto 1rem;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .player-name {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .player-info {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1rem;
+        }
+        
+        .player-description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            font-style: italic;
+        }
+        
+        .seasons-container {
+            padding: 2rem;
+        }
+        
+        .seasons-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        
+        .season-tab {
+            flex: 1;
+            padding: 0.8rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 100px;
+            font-size: 0.9rem;
+        }
+        
+        .season-tab.active {
+            background: #003366;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,51,102,0.3);
+        }
+        
+        .season-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .season-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.3rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #003366, #004488);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .stat-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #003366;
+            margin-bottom: 0.4rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-size: 0.85rem;
+        }
+        
+        .performance-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .performance-title {
+            font-size: 1.3rem;
+            color: #003366;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            gap: 1rem;
+        }
+        
+        .chart-label {
+            min-width: 80px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        
+        .chart-progress {
+            flex: 1;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .chart-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .chart-fill.goals {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a52);
+        }
+        
+        .chart-fill.assists {
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+        }
+        
+        .chart-fill.points {
+            background: linear-gradient(90deg, #45b7d1, #2196f3);
+        }
+        
+        .player-navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 51, 102, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 0.8rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            font-size: 0.9rem;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: #003366;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+        
+        .back-link:hover {
+            background: white;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+        
+        .special-mention {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: 0.8rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .player-name {
+                font-size: 1.8rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.8rem;
+            }
+            
+            .carousel-nav {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+            
+            .carousel-nav.prev {
+                left: 15px;
+            }
+            
+            .carousel-nav.next {
+                right: 15px;
+            }
+            
+            .player-card {
+                width: 95%;
+            }
+            
+            .player-description {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('accueil') }}" class="back-link">← Retour aux stats</a>
+    
+    <!-- Contrôles supérieurs -->
+    <div class="controls">
+        <button class="control-button" onclick="randomPlayer()">🎲 Aléatoire</button>
+        <a href="{{ url_for('admin') }}" class="control-button">🔧 Admin</a>
+    </div>
+    
+    <!-- Navigation carrousel -->
+    <button class="carousel-nav prev" onclick="previousPlayer()">‹</button>
+    <button class="carousel-nav next" onclick="nextPlayer()">›</button>
+    
+    <div class="carousel-container">
+        <div class="player-card" id="playerCard">
+            <!-- Le contenu sera généré dynamiquement -->
+        </div>
+    </div>
+    
+    <!-- Indicateur de navigation -->
+    <div class="player-navigation" id="playerNavigation">
+        Chargement...
+    </div>
+    
+    <script>
+        // Données des joueurs passées depuis Flask
+        const players = {{ joueurs | tojson }};
+        let currentPlayerIndex = {{ index_initial }};
+
+        function showSeason(seasonId) {
+            document.querySelectorAll('.season-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.season-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            const seasonContent = document.getElementById(`season-${seasonId}`);
+            if (seasonContent) {
+                seasonContent.classList.add('active');
+            }
+            
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        function nextPlayer() {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            updatePlayerDisplay();
+        }
+
+        function previousPlayer() {
+            currentPlayerIndex = (currentPlayerIndex - 1 + players.length) % players.length;
+            updatePlayerDisplay();
+        }
+
+        function randomPlayer() {
+            const randomIndex = Math.floor(Math.random() * players.length);
+            currentPlayerIndex = randomIndex;
+            updatePlayerDisplay();
+        }
+
+        function generatePlayerHTML(player) {
+            const profil = player.profil;
+            const specialMention = profil.isGoalie ? 
+                '<div class="special-mention">🥅 GARDIEN DE BUT</div>' : '';
+
+            const seasonsHTML = ['2025-2026', '2024-2025', '2023-2024', '2022-2023'].map(season => {
+                const data = player.saisons[season];
+                
+                if (!data) {
+                    return `
+                        <div id="season-${season}" class="season-content">
+                            <div class="no-data">
+                                <h3>🚫 Aucune donnée disponible</h3>
+                                <p>${player.nom} n'était pas encore membre de l'équipe cette saison-là.</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const points = data.buts + data.passes;
+                const moyenne = data.matches > 0 ? (points / data.matches).toFixed(2) : '0.00';
+                const maxStat = Math.max(data.buts, data.passes, points);
+                
+                const butsPercent = maxStat > 0 ? (data.buts / maxStat * 100) : 0;
+                const passesPercent = maxStat > 0 ? (data.passes / maxStat * 100) : 0;
+                const pointsPercent = maxStat > 0 ? (points / maxStat * 100) : 0;
+
+                return `
+                    <div id="season-${season}" class="season-content">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">🥅</div>
+                                <div class="stat-value">${data.buts}</div>
+                                <div class="stat-label">Buts</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🎯</div>
+                                <div class="stat-value">${data.passes}</div>
+                                <div class="stat-label">Passes</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">⭐</div>
+                                <div class="stat-value">${points}</div>
+                                <div class="stat-label">Points</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🏒</div>
+                                <div class="stat-value">${data.matches}</div>
+                                <div class="stat-label">Matches</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value">${moyenne}</div>
+                                <div class="stat-label">Pts/Match</div>
+                            </div>
+                        </div>
+                        
+                        <div class="performance-section">
+                            <h3 class="performance-title">📊 Performance saison ${season}</h3>
+                            <div class="chart-bar">
+                                <div class="chart-label">Buts</div>
+                                <div class="chart-progress">
+                                    <div class="chart-fill goals" style="width: ${butsPercent}%;">${data.buts}</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-label">Passes</div>
+                                <div class="chart-progress">
+                                    <div class="chart-fill assists" style="width: ${passesPercent}%;">${data.passes}</div>
+                                </div>
+                            </div>
+                            <div class="chart-bar">
+                                <div class="chart-label">Points</div>
+                                <div class="chart-progress">
+                                    <div class="chart-fill points" style="width: ${pointsPercent}%;">${points}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="player-header">
+                    <div class="player-avatar">${profil.avatar}</div>
+                    <h1 class="player-name">${player.nom}</h1>
+                    ${profil.nickname ? `<div class="player-info">"${profil.nickname}"</div>` : ''}
+                    <div class="player-info">${profil.info}</div>
+                    ${specialMention}
+                    <div class="player-description">${profil.description}</div>
+                </div>
+                
+                <div class="seasons-container">
+                    <div class="seasons-tabs">
+                        <button class="season-tab active" onclick="showSeason('2025-2026')">2025-26</button>
+                        <button class="season-tab" onclick="showSeason('2024-2025')">2024-25</button>
+                        <button class="season-tab" onclick="showSeason('2023-2024')">2023-24</button>
+                        <button class="season-tab" onclick="showSeason('2022-2023')">2022-23</button>
+                    </div>
+                    ${seasonsHTML}
+                </div>
+            `;
+        }
+
+        function updatePlayerDisplay() {
+            if (players.length === 0) {
+                document.getElementById('playerCard').innerHTML = `
+                    <div style="text-align: center; padding: 4rem; color: #666;">
+                        <h2>🔍 Aucun joueur trouvé</h2>
+                        <p>Aucune donnée disponible.</p>
+                    </div>
+                `;
+                document.getElementById('playerNavigation').textContent = 'Aucun joueur trouvé';
+                return;
+            }
+            
+            const player = players[currentPlayerIndex];
+            const playerCard = document.getElementById('playerCard');
+            const playerNavigation = document.getElementById('playerNavigation');
+            
+            playerCard.innerHTML = generatePlayerHTML(player);
+            
+            playerNavigation.textContent = 
+                `Joueur ${currentPlayerIndex + 1} sur ${players.length} - ${player.nom}`;
+            
+            // Mettre à jour l'URL sans recharger la page
+            const newUrl = `/carousel/${encodeURIComponent(player.nom)}`;
+            history.replaceState(null, '', newUrl);
+            
+            setTimeout(() => {
+                const firstTab = document.querySelector('.season-tab');
+                const firstContent = document.querySelector('.season-content');
+                if (firstTab && firstContent) {
+                    firstTab.classList.add('active');
+                    firstContent.classList.add('active');
+                }
+                animateCharts();
+            }, 100);
+        }
+
+        function animateCharts() {
+            setTimeout(() => {
+                document.querySelectorAll('.chart-fill').forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 200);
+                });
+            }, 300);
+        }
+
+        // Navigation au clavier
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                previousPlayer();
+            } else if (e.key === 'ArrowRight') {
+                nextPlayer();
+            }
+        });
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePlayerDisplay();
+        });
+
+        // Fonctions globales
+        window.showSeason = showSeason;
+        window.nextPlayer = nextPlayer;
+        window.previousPlayer = previousPlayer;
+        window.randomPlayer = randomPlayer;
+    </script>
+</body>
+</html>
