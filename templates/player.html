@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistiques - Les Plombiers Hockey</title>
+    <title>Statistiques - Ligue de garage des plombiers</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .container {
@@ -15,38 +15,54 @@
         .hero {
             background: linear-gradient(135deg, #003366, #004488);
             color: white;
-            padding: 3rem 2rem;
+            padding: 4rem 2rem;
             border-radius: 15px;
             margin-bottom: 2rem;
             text-align: center;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,51,102,0.3);
         }
         
         .hero::before {
-            content: "🏒";
+            content: "🔧";
             position: absolute;
-            font-size: 8rem;
-            opacity: 0.1;
+            font-size: 12rem;
+            opacity: 0.08;
             top: 50%;
-            left: 50%;
+            left: 20%;
             transform: translate(-50%, -50%);
         }
         
+        .hero::after {
+            content: "🏒";
+            position: absolute;
+            font-size: 10rem;
+            opacity: 0.08;
+            top: 30%;
+            right: 20%;
+            transform: translate(50%, -50%);
+        }
+        
         .hero h1 {
-            font-size: 3rem;
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 4rem;
+            margin: 0 0 0.5rem 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            font-weight: 900;
+            letter-spacing: 1px;
+            line-height: 1.1;
         }
         
         .hero p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-top: 1rem;
+            font-size: 1.5rem;
+            opacity: 0.95;
+            margin: 0;
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            font-weight: 400;
+            letter-spacing: 0.5px;
         }
         
         .nav-menu {
@@ -325,7 +341,15 @@
         
         @media (max-width: 768px) {
             .hero h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .hero {
+                padding: 3rem 1.5rem;
             }
             
             .podium {
@@ -362,10 +386,10 @@
             </a>
         </div>
         
-        <!-- En-tête héroïque -->
+        <!-- En-tête héroïque avec le nouveau titre -->
         <div class="hero">
-            <h1>🏆 Les Plombiers Hockey</h1>
-            <p>Statistiques officielles de la saison 2024-2025</p>
+            <h1>Ligue de garage des plombiers</h1>
+            <p>Statistiques officielles</p>
         </div>
         
         <!-- Menu de navigation -->
