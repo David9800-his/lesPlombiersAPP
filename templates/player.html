@@ -1,4 +1,131 @@
-            .season-buttons {
+        <!-- Podium des 3 premiers -->
+        {% if podium_final and podium_final.afficher %}
+        <div class="podium-container">
+            <div class="podium-header">
+                <h2>🏆 Résultat final de la saison {{ podium_final.saison }}</h2>
+                <div class="podium-status">
+                    {% if podium_final.statut == 'terminee' %}
+                    <span class="status-badge">SAISON TERMINÉE</span>
+                    <small>Podium officiel</small>
+                    {% elif podium_final.statut == 'playoffs' %}
+                    <span class="status-badge" style="background: #ff6600;">PLAYOFFS EN COURS</span>
+                    <small>Classement provisoire</small>
+                    {% else %}
+                    <span class="status-badge" style="background: #007bff;">SAISON EN COURS</span>
+                    <small>Classement actuel</small>
+                    {% endif %}
+                </div>
+                {% if podium_final.message %}
+                <p style="margin-top: 1rem; color: #666; font-style: italic;">{{ podium_final.message }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="podium">
+                <!-- 1ère place -->
+                <div class="podium-item first">
+                    <div class="podium-number">1</div>
+                    <h3>👑 Champion</h3>
+                    <div class="player-name" style="font-size: 1.3rem;">{{ podium_final.podium.champion.nom }}</div>
+                    <div class="player-stat" style="font-size: 1.5rem;">{{ podium_final.podium.champion.buts + podium_final.podium.champion.passes }} points</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="stats-badge badge-goals">{{ podium_final.podium.champion.buts }}B</span>
+                        <span class="stats-badge badge-assists">{{ podium_final.podium.champion.passes }}P</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('carousel_joueurs', nom_joueur=podium_final.podium.champion.nom) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                    </div>
+                </div>
+                
+                <!-- 2ème place -->
+                <div class="podium-item second">
+                    <div class="podium-number">2</div>
+                    <h3>🥈 2e place</h3>
+                    <div class="player-name">{{ podium_final.podium.second.nom }}</div>
+                    <div class="player-stat">{{ podium_final.podium.second.buts + podium_final.podium.second.passes }} points</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="stats-badge badge-goals">{{ podium_final.podium.second.buts }}B</span>
+                        <span class="stats-badge badge-assists">{{ podium_final.podium.second.passes }}P</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('carousel_joueurs', nom_joueur=podium_final.podium.second.nom) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                    </div>
+                </div>
+                
+                <!-- 3ème place -->
+                <div class="podium-item third">
+                    <div class="podium-number">3</div>
+                    <h3>🥉 3ème place</h3>
+                    <div class="player-name">{{ podium_final.podium.third.nom }}</div>
+                    <div class="player-stat">{{ podium_final.podium.third.buts + podium_final.podium.third.passes }} points</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="stats-badge badge-goals">{{ podium_final.podium.third.buts }}B</span>
+                        <span class="stats-badge badge-assists">{{ podium_final.podium.third.passes }}P</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('carousel_joueurs', nom_joueur=podium_final.podium.third.nom) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif classement|length >= 3 %}
+        <!-- Podium basé sur les statistiques actuelles (fallback) -->
+        <div class="podium-container">
+            <div class="podium-header">
+                <h2>🏆 Classement actuel de la saison 2024-2025</h2>
+                <div class="podium-status">
+                    <span class="status-badge" style="background: #007bff;">SAISON EN COURS</span>
+                    <small>Basé sur les statistiques actuelles</small>
+                </div>
+            </div>
+            
+            <div class="podium">
+                <!-- 1ère place -->
+                <div class="podium-item first">
+                    <div class="podium-number">1</div>
+                    <h3>👑 Leader</h3>
+                    <div class="player-name" style="font-size: 1.3rem;">{{ classement[0][0] }}</div>
+                    <div class="player-stat" style="font-size: 1.5rem;">{{ classement[0][1].buts + classement[0][1].passes }} points</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="stats-badge badge-goals">{{ classement[0][1].buts }}B</span>
+                        <span class="stats-badge badge-assists">{{ classement[0][1].passes }}P</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[0][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                    </div>
+                </div>
+                
+                <!-- 2ème place -->
+                <div class="podium-item second">
+                    <div class="podium-number">2</div>
+                    <h3>🥈 2e place</h3>
+                    <div class="player-name">{{ classement[1][0] }}</div>
+                    <div class="player-stat">{{ classement[1][1].buts + classement[1][1].passes }} points</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="stats-badge badge-goals">{{ classement[1][1].buts }}B</span>
+                        <span class="stats-badge badge-assists">{{ classement[1][1].passes }}P</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[1][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                    </div>
+                </div>
+                
+                <!-- 3ème place -->
+                <div class="podium-item third">
+                    <div class="podium-number">3</div>
+                    <h3>🥉 3ème place</h3>
+                    <div class="player-name">{{ classement[2][0] }}</div>
+                    <div class="player-stat">{{ classement[2][1].buts + classement[2][1].passes }} points</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="stats-badge badge-goals">{{ classement[2][1].buts }}B</span>
+                        <span class="stats-badge badge-assists">{{ classement[2][1].passes }}P</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[2][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}            .season-buttons {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 0.8rem;
             }
@@ -156,11 +283,54 @@
             box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
         }
         
+        .podium-container {
+            margin: 3rem 0;
+        }
+        
+        .podium-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .podium-header h2 {
+            color: #333;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+        
+        .podium-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .status-badge {
+            background: #28a745;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .podium-status small {
+            color: #666;
+            font-weight: 500;
+        }
+        
         .podium {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 2rem;
-            margin: 3rem 0;
         }
         
         .podium-item {
@@ -526,49 +696,59 @@
         
         <!-- Podium des 3 premiers -->
         {% if classement|length >= 3 %}
-        <div class="podium">
-            <!-- 1ère place -->
-            <div class="podium-item first">
-                <div class="podium-number">1</div>
-                <h3>👑 Champion</h3>
-                <div class="player-name" style="font-size: 1.3rem;">{{ classement[0][0] }}</div>
-                <div class="player-stat" style="font-size: 1.5rem;">{{ classement[0][1].buts + classement[0][1].passes }} points</div>
-                <div style="margin-top: 1rem;">
-                    <span class="stats-badge badge-goals">{{ classement[0][1].buts }}B</span>
-                    <span class="stats-badge badge-assists">{{ classement[0][1].passes }}P</span>
-                </div>
-                <div style="margin-top: 1rem;">
-                    <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[0][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+        <div class="podium-container">
+            <div class="podium-header">
+                <h2>🏆 Résultat final de la saison 2024-2025</h2>
+                <div class="podium-status">
+                    <span class="status-badge">SAISON TERMINÉE</span>
+                    <small>Podium officiel</small>
                 </div>
             </div>
             
-            <!-- 2ème place -->
-            <div class="podium-item second">
-                <div class="podium-number">2</div>
-                <h3>🥈 2e place</h3>
-                <div class="player-name">{{ classement[1][0] }}</div>
-                <div class="player-stat">{{ classement[1][1].buts + classement[1][1].passes }} points</div>
-                <div style="margin-top: 1rem;">
-                    <span class="stats-badge badge-goals">{{ classement[1][1].buts }}B</span>
-                    <span class="stats-badge badge-assists">{{ classement[1][1].passes }}P</span>
+            <div class="podium">
+                <!-- 1ère place -->
+                <div class="podium-item first">
+                    <div class="podium-number">1</div>
+                    <h3>👑 Champion</h3>
+                    <div class="player-name" style="font-size: 1.3rem;">{{ classement[0][0] }}</div>
+                    <div class="player-stat" style="font-size: 1.5rem;">{{ classement[0][1].buts + classement[0][1].passes }} points</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="stats-badge badge-goals">{{ classement[0][1].buts }}B</span>
+                        <span class="stats-badge badge-assists">{{ classement[0][1].passes }}P</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[0][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                    </div>
                 </div>
-                <div style="margin-top: 1rem;">
-                    <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[1][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                
+                <!-- 2ème place -->
+                <div class="podium-item second">
+                    <div class="podium-number">2</div>
+                    <h3>🥈 2e place</h3>
+                    <div class="player-name">{{ classement[1][0] }}</div>
+                    <div class="player-stat">{{ classement[1][1].buts + classement[1][1].passes }} points</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="stats-badge badge-goals">{{ classement[1][1].buts }}B</span>
+                        <span class="stats-badge badge-assists">{{ classement[1][1].passes }}P</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[1][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- 3ème place -->
-            <div class="podium-item third">
-                <div class="podium-number">3</div>
-                <h3>🥉 3ème place</h3>
-                <div class="player-name">{{ classement[2][0] }}</div>
-                <div class="player-stat">{{ classement[2][1].buts + classement[2][1].passes }} points</div>
-                <div style="margin-top: 1rem;">
-                    <span class="stats-badge badge-goals">{{ classement[2][1].buts }}B</span>
-                    <span class="stats-badge badge-assists">{{ classement[2][1].passes }}P</span>
-                </div>
-                <div style="margin-top: 1rem;">
-                    <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[2][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                
+                <!-- 3ème place -->
+                <div class="podium-item third">
+                    <div class="podium-number">3</div>
+                    <h3>🥉 3ème place</h3>
+                    <div class="player-name">{{ classement[2][0] }}</div>
+                    <div class="player-stat">{{ classement[2][1].buts + classement[2][1].passes }} points</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="stats-badge badge-goals">{{ classement[2][1].buts }}B</span>
+                        <span class="stats-badge badge-assists">{{ classement[2][1].passes }}P</span>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[2][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                    </div>
                 </div>
             </div>
         </div>
