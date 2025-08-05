@@ -53,6 +53,7 @@
             font-weight: 900;
             letter-spacing: 1px;
             line-height: 1.1;
+            color: white;
         }
         
         .hero p {
@@ -331,12 +332,16 @@
         }
         
         .season-info {
-            background: linear-gradient(90deg, #e3f2fd, #f3e5f5);
-            padding: 1rem;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #003366, #004488);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
             margin-bottom: 2rem;
             text-align: center;
-            border-left: 4px solid #003366;
+            border-left: 4px solid #ffd700;
+            box-shadow: 0 4px 12px rgba(0,51,102,0.2);
+            font-size: 1.1rem;
+            font-weight: 500;
         }
         
         @media (max-width: 768px) {
@@ -359,7 +364,7 @@
             
             .podium-item.first {
                 transform: none;
-                order: -1;
+                order: 1;
             }
             
             .tops-section {
@@ -417,21 +422,6 @@
         <!-- Podium des 3 premiers -->
         {% if classement|length >= 3 %}
         <div class="podium">
-            <!-- 2ème place -->
-            <div class="podium-item second">
-                <div class="podium-number">2</div>
-                <h3>🥈 Vice-Champion</h3>
-                <div class="player-name">{{ classement[1][0] }}</div>
-                <div class="player-stat">{{ classement[1][1].buts + classement[1][1].passes }} points</div>
-                <div style="margin-top: 1rem;">
-                    <span class="stats-badge badge-goals">{{ classement[1][1].buts }}B</span>
-                    <span class="stats-badge badge-assists">{{ classement[1][1].passes }}P</span>
-                </div>
-                <div style="margin-top: 1rem;">
-                    <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[1][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
-                </div>
-            </div>
-            
             <!-- 1ère place -->
             <div class="podium-item first">
                 <div class="podium-number">1</div>
@@ -444,6 +434,21 @@
                 </div>
                 <div style="margin-top: 1rem;">
                     <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[0][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
+                </div>
+            </div>
+            
+            <!-- 2ème place -->
+            <div class="podium-item second">
+                <div class="podium-number">2</div>
+                <h3>🥈 Vice-Champion</h3>
+                <div class="player-name">{{ classement[1][0] }}</div>
+                <div class="player-stat">{{ classement[1][1].buts + classement[1][1].passes }} points</div>
+                <div style="margin-top: 1rem;">
+                    <span class="stats-badge badge-goals">{{ classement[1][1].buts }}B</span>
+                    <span class="stats-badge badge-assists">{{ classement[1][1].passes }}P</span>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <a href="{{ url_for('carousel_joueurs', nom_joueur=classement[1][0]) }}" class="nav-link" style="margin: 0; padding: 0.5rem 1rem; font-size: 0.9rem;">🎠 Voir la fiche</a>
                 </div>
             </div>
             
