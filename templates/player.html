@@ -1,4 +1,16 @@
-<!DOCTYPE html>
+.season-buttons {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+            }
+            
+            .season-btn {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .season-selector {
+                padding: 1.5rem;
+            }<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -336,12 +348,91 @@
             color: white;
             padding: 1.5rem;
             border-radius: 15px;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             text-align: center;
             border-left: 4px solid #ffd700;
             box-shadow: 0 4px 12px rgba(0,51,102,0.2);
             font-size: 1.1rem;
             font-weight: 500;
+        }
+        
+        .season-selector {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #003366;
+        }
+        
+        .season-selector h3 {
+            color: #003366;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.3rem;
+        }
+        
+        .season-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .season-btn {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            line-height: 1.3;
+        }
+        
+        .season-btn:hover {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+            border-color: #003366;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,51,102,0.2);
+        }
+        
+        .season-btn.active {
+            background: linear-gradient(135deg, #003366, #004488);
+            color: white;
+            border-color: #ffd700;
+            box-shadow: 0 4px 15px rgba(0,51,102,0.3);
+        }
+        
+        .season-btn.active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,51,102,0.4);
+        }
+        
+        .season-btn small {
+            display: block;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 0.2rem;
+        }
+        
+        .season-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .season-notice p {
+            margin: 0;
+            color: #856404;
+            font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
@@ -405,9 +496,23 @@
         
         <!-- Informations saison -->
         <div class="season-info">
-            <strong>Saison régulière 2024-2025</strong> • 
+            <strong>Saison régulière 2024-2025 (Beauport)</strong> • 
             {{ classement|length }} joueurs actifs • 
-            Matchs les mardis soirs
+            Matches les mardis soirs
+        </div>
+        
+        <!-- Sélecteur de saisons -->
+        <div class="season-selector">
+            <h3>📅 Sélectionner une saison</h3>
+            <div class="season-buttons">
+                <button class="season-btn" data-season="2022-2023">2022-2023<br><small>Vanier</small></button>
+                <button class="season-btn" data-season="2023-2024">2023-2024<br><small>Vanier</small></button>
+                <button class="season-btn active" data-season="2024-2025">2024-2025<br><small>Beauport</small></button>
+                <button class="season-btn" data-season="2025-2026">2025-2026<br><small>Beauport</small></button>
+            </div>
+            <div class="season-notice">
+                <p>💡 <em>Saisons 2022-2023, 2023-2024 et 2025-2026 : Données à venir</em></p>
+            </div>
         </div>
         
         <!-- CTA Carrousel -->
@@ -440,7 +545,7 @@
             <!-- 2ème place -->
             <div class="podium-item second">
                 <div class="podium-number">2</div>
-                <h3>🥈 Vice-Champion</h3>
+                <h3>🥈 2e place</h3>
                 <div class="player-name">{{ classement[1][0] }}</div>
                 <div class="player-stat">{{ classement[1][1].buts + classement[1][1].passes }} points</div>
                 <div style="margin-top: 1rem;">
@@ -598,6 +703,30 @@
                     }, index * 50);
                 });
             }, 800);
+            
+            // Gestion du sélecteur de saisons
+            const seasonButtons = document.querySelectorAll('.season-btn');
+            seasonButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const season = this.dataset.season;
+                    
+                    // Retirer la classe active de tous les boutons
+                    seasonButtons.forEach(btn => btn.classList.remove('active'));
+                    // Ajouter la classe active au bouton cliqué
+                    this.classList.add('active');
+                    
+                    // Pour l'instant, juste une alerte - à remplacer par la logique de changement de saison
+                    if (season === '2024-2025') {
+                        // Saison actuelle - pas de changement
+                        return;
+                    } else {
+                        alert(`🏒 Saison ${season} sélectionnée!\n\nCette fonctionnalité sera ajoutée prochainement avec les données historiques.`);
+                        // Remettre 2024-2025 comme active pour l'instant
+                        document.querySelector('[data-season="2024-2025"]').classList.add('active');
+                        this.classList.remove('active');
+                    }
+                });
+            });
         });
         
         // Smooth scroll pour les ancres
