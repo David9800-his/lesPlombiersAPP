@@ -1,38 +1,15 @@
-## templates/auth/login.html
-```html
-{% extends "base.html" %}
-
-{% block title %}Admin Login - Les Plombiers{% endblock %}
-
-{% block content %}
-<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 2px solid #808080; background-color: #f0f0f0;">
-    <h2 style="text-align: center; color: #000080;">ADMIN LOGIN</h2>
-    <p style="text-align: center; font-size: 11px;">Authorized Personnel Only</p>
-    
-    <form method="POST" style="margin-top: 20px;">
-        <div style="margin-bottom: 15px;">
-            <label for="username" style="display: block; margin-bottom: 5px; font-weight: bold;">Username:</label>
-            <input type="text" id="username" name="username" required
-                   style="width: 100%; padding: 5px; border: 2px solid #808080; font-size: 12px;">
-        </div>
-        
-        <div style="margin-bottom: 15px;">
-            <label for="password" style="display: block; margin-bottom: 5px; font-weight: bold;">Password:</label>
-            <input type="password" id="password" name="password" required
-                   style="width: 100%; padding: 5px; border: 2px solid #808080; font-size: 12px;">
-        </div>
-        
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px;">
-            Login
-        </button>
-    </form>
-    
-    <div style="margin-top: 20px; padding: 10px; background-color: #ffffcc; border: 1px solid #cccc00; font-size: 10px;">
-        <p><strong>Default Admin Credentials:</strong></p>
-        <p>Username: admin</p>
-        <p>Password: admin123</p>
-        <p><em>(Change these in production!)</em></p>
+<!DOCTYPE html>
+<html>
+<head><title>Admin Login</title></head>
+<body style="font-family: Arial; background: #c0c0c0; padding: 50px;">
+    <div style="max-width: 400px; margin: 0 auto; background: white; padding: 30px; border: 2px solid #808080;">
+        <h2>Admin Login</h2>
+        <form method="POST">
+            <p><label>Username: <input type="text" name="username" required style="width: 100%; padding: 5px;"></label></p>
+            <p><label>Password: <input type="password" name="password" required style="width: 100%; padding: 5px;"></label></p>
+            <p><button type="submit" style="padding: 10px 20px;">Login</button></p>
+        </form>
+        <p><small>Default: admin / admin123</small></p>
     </div>
-</div>
-{% endblock %}
-```
+</body>
+</html>

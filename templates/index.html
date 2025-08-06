@@ -1,51 +1,55 @@
-## templates/index.html
-```html
-{% extends "base.html" %}
-
-{% block content %}
-<div class="welcome-banner">
-    <h2>WELCOME TO THE RINK!</h2>
-    <p>Your one-stop destination for Les Plombiers hockey statistics and news!</p>
-</div>
-
-<!-- Team Stats Section -->
-{% if team_stats %}
-<div id="stats">
-    <h3>TEAM STATISTICS</h3>
-    <div class="stats-grid">
-        <div class="stat-box">
-            <div class="stat-number">{{ team_stats.total_goals or 0 }}</div>
-            <div class="stat-label">TOTAL GOALS</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Les Plombiers Hockey</title>
+    <style>
+        body { font-family: Arial; background: #c0c0c0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border: 2px solid #808080; }
+        .admin-link { position: absolute; top: 10px; right: 20px; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 20px 0; }
+        .stat-box { border: 2px solid #808080; padding: 15px; text-align: center; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="admin-link">
+            {% if current_user.is_authenticated %}
+                <a href="/admin/">Admin</a> | <a href="/auth/logout">Logout</a>
+            {% else %}
+                <a href="/auth/login">Admin Login</a>
+            {% endif %}
         </div>
-        <div class="stat-box">
-            <div class="stat-number">{{ team_stats.total_assists or 0 }}</div>
-            <div class="stat-label">TOTAL ASSISTS</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-number">{{ team_stats.total_points or 0 }}</div>
-            <div class="stat-label">TOTAL POINTS</div>
-        </div>
-        {% if team_stats.top_scorer %}
-        <div class="stat-box">
-            <div class="stat-number">{{ team_stats.top_scorer.name }}</div>
-            <div class="stat-label">TOP SCORER ({{ team_stats.top_scorer.goals }} GOALS)</div>
+        
+        <h1>🏒 Les Plombiers Hockey Stats 🏒</h1>
+        <p>Welcome to your retro hockey stats site!</p>
+        
+        {% if team_stats %}
+        <div class="stats">
+            <div class="stat-box">
+                <h3>{{ team_stats.total_goals }}</h3>
+                <p>Total Goals</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ team_stats.total_assists }}</h3>
+                <p>Total Assists</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ team_stats.total_points }}</h3>
+                <p>Total Points</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ team_stats.top_scorer.name if team_stats.top_scorer else 'N/A' }}</h3>
+                <p>Top Scorer</p>
+            </div>
         </div>
         {% endif %}
+        
+        {% if recent_matches %}
+        <h2>Recent Matches</h2>
+        {% for match in recent_matches %}
+        <p>{{ match.date }} - vs {{ match.opponent }} - {{ match.score_display }} ({{ match.result }})</p>
+        {% endfor %}
+        {% endif %}
     </div>
-</div>
-{% endif %}
-
-<!-- Player Carousel -->
-{% if featured_players %}
-<div id="players">
-    <h3>FEATURED PLAYERS</h3>
-    <div class="player-carousel">
-        {% for player in featured_players %}
-        <div class="player-card {% if loop.first %}active{% endif %}">
-            <div class="player-image">
-                <img src="{{ player.image_url }}" alt="{{ player.name }}" onerror="this.src='/static/images/default_player.png'">
-            </div>
-            <div class="player-info">
-                <h4>{{ player.name }}</h4>
-                <p>#{{ player.jersey_number or 'N/A' }} • {{ player.position }}</p>
-                <div class="player-stats
+</body>
+</html>

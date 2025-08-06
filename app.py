@@ -1,44 +1,3 @@
-# IMMEDIATE DEPLOYMENT FIX - Les Plombiers
-
-## PROBLEM: Render is trying to run the wrong file
-The error shows Render is running `python hockey_stats_app.py` but this file has mixed content.
-We need to fix the startup command and file structure.
-
-## SOLUTION 1: Fix render.yaml (RECOMMENDED)
-
-Create or update your `render.yaml` file:
-
-```yaml
-services:
-  - type: web
-    name: les-plombiers-hockey
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
-    envVars:
-      - key: SECRET_KEY
-        generateValue: true
-      - key: FLASK_ENV
-        value: production
-```
-
-## SOLUTION 2: Update requirements.txt (REQUIRED)
-
-Make sure your `requirements.txt` file contains:
-
-```txt
-Flask==3.1.1
-Flask-SQLAlchemy==3.1.1
-Flask-Login==0.6.3
-Werkzeug==3.1.3
-gunicorn==21.2.0
-```
-
-## SOLUTION 3: Clean app.py (CRITICAL)
-
-Replace your entire `app.py` file with this clean version:
-
-```python
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
@@ -49,10 +8,8 @@ import csv
 import io
 from datetime import datetime
 
-# Initialize Flask app
 app = Flask(__name__)
 
-# Configuration
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hockey-stats-secret-key-1994'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///hockey_stats.db'
@@ -64,18 +21,14 @@ class Config:
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config.from_object(Config)
-
-# Create upload folder
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Initialize extensions
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth_login'
 login_manager.login_message = 'Please log in to access the admin panel.'
 
-# Models
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -163,7 +116,6 @@ def load_user(user_id):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-# Routes
 @app.route('/')
 def index():
     featured_players = Player.query.filter_by(is_featured=True, is_active=True).all()
@@ -396,26 +348,4 @@ if __name__ == '__main__':
         create_admin_user()
     
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
-```
-
-## CRITICAL ACTIONS TO TAKE NOW:
-
-1. **Delete the problematic file**:
-   ```bash
-   rm hockey_stats_app.py
-   ```
-
-2. **Create/update the correct files**:
-   - Save the clean `app.py` above
-   - Make sure `render.yaml` uses `startCommand: gunicorn app:app --bind 0.0.0.0:$PORT`
-   - Update `requirements.txt` with the simplified dependencies
-
-3. **Commit and push**:
-   ```bash
-   git add .
-   git commit -m "Fix: Use clean app.py and correct startup command"
-   git push origin main
-   ```
-
-The deployment should work immediately after this fix!
+    app.run(host='0.0.0.0', port=port, debug=False)

@@ -1,57 +1,28 @@
-## templates/admin/dashboard.html
-```html
-{% extends "base.html" %}
-
-{% block title %}Admin Dashboard - Les Plombiers{% endblock %}
-
-{% block content %}
-<div style="padding: 20px;">
-    <h2 style="color: #000080;">ADMIN DASHBOARD</h2>
-    <p>Welcome back, {{ current_user.username }}!</p>
-    
-    <div class="stats-grid">
-        <div class="stat-box">
-            <div class="stat-number">{{ total_players }}</div>
-            <div class="stat-label">ACTIVE PLAYERS</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-number">{{ total_matches }}</div>
-            <div class="stat-label">TOTAL MATCHES</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-number">{{ total_news }}</div>
-            <div class="stat-label">NEWS POSTS</div>
-        </div>
+<!DOCTYPE html>
+<html>
+<head><title>Admin Dashboard</title></head>
+<body style="font-family: Arial; background: #c0c0c0; padding: 20px;">
+    <div style="max-width: 800px; margin: 0 auto; background: white; padding: 20px; border: 2px solid #808080;">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome, {{ current_user.username }}!</p>
+        <p><a href="/">Back to Site</a> | <a href="/auth/logout">Logout</a></p>
+        
+        <h2>Statistics</h2>
+        <p>Players: {{ total_players }} | Matches: {{ total_matches }} | News: {{ total_news }}</p>
+        
+        <h2>Quick Actions</h2>
+        <p>
+            <a href="/admin/players/add">Add Player</a> |
+            <a href="/admin/matches/add">Add Match</a> |
+            <a href="/admin/news/add">Add News</a>
+        </p>
+        
+        <h2>Management</h2>
+        <p>
+            <a href="/admin/players">Manage Players</a> |
+            <a href="/admin/matches">Manage Matches</a> |
+            <a href="/admin/news">Manage News</a>
+        </p>
     </div>
-    
-    <h3>Quick Actions</h3>
-    <div style="margin: 20px 0;">
-        <a href="{{ url_for('admin_add_player') }}" class="btn btn-primary">Add Player</a>
-        <a href="{{ url_for('admin_add_match') }}" class="btn btn-primary">Add Match</a>
-        <a href="{{ url_for('admin_add_news') }}" class="btn btn-primary">Add News</a>
-        <a href="{{ url_for('admin_export_players') }}" class="btn">Export Stats</a>
-    </div>
-    
-    <h3>Management</h3>
-    <div style="margin: 20px 0;">
-        <a href="{{ url_for('admin_players') }}" class="btn">Manage Players</a>
-        <a href="{{ url_for('admin_matches') }}" class="btn">Manage Matches</a>
-        <a href="{{ url_for('admin_news') }}" class="btn">Manage News</a>
-    </div>
-    
-    {% if recent_matches %}
-    <h3>Recent Matches</h3>
-    <div class="matches-list">
-        {% for match in recent_matches %}
-        <div class="match-item {{ match.result.lower() }}">
-            <strong>{{ match.date.strftime('%m/%d') }}</strong>
-            vs {{ match.opponent }}
-            <strong>{{ match.score_display }}</strong>
-            ({{ match.result }})
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-</div>
-{% endblock %}
-```
+</body>
+</html>
