@@ -3,30 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Plombiers – Hockey Club</title>
+    <title>Les Plombiers 🔧 – Hockey Club Rigolo</title>
     <style>
-        /* Variables CSS pour design durable */
+        /* Import Google Fonts pour style cartoon */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Comic+Neue:wght@300;400;700&display=swap');
+
+        /* Variables CSS cartoon */
         :root {
-            --primary: #1a1a1a;
-            --secondary: #f5f5f5;
-            --accent: #0066cc;
-            --success: #00b894;
-            --warning: #fdcb6e;
-            --error: #e17055;
-            --text-primary: #2d3436;
-            --text-secondary: #636e72;
-            --text-light: #b2bec3;
-            --border: #ddd;
-            --shadow: rgba(0, 0, 0, 0.08);
-            --shadow-hover: rgba(0, 0, 0, 0.15);
-            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --radius: 8px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --font-primary: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            --primary: #ff6b35;
+            --secondary: #f7931e;
+            --tertiary: #4ecdc4;
+            --quaternary: #45b7d1;
+            --success: #96ceb4;
+            --warning: #feca57;
+            --error: #ff6b6b;
+            --purple: #a55eea;
+            --pink: #fd79a8;
+            --bg-light: #ffeaa7;
+            --bg-cream: #fdcb6e;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --white: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.15);
+            --shadow-hover: rgba(0, 0, 0, 0.25);
+            --gradient-fun: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-warm: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-cool: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --radius: 20px;
+            --radius-small: 12px;
+            --transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --font-primary: 'Fredoka', cursive;
+            --font-secondary: 'Comic Neue', cursive;
+            --bounce: cubic-bezier(0.68, -0.6, 0.32, 1.6);
         }
 
-        /* Reset et base */
+        /* Reset et base cartoon */
         * {
             margin: 0;
             padding: 0;
@@ -41,9 +52,31 @@
         body {
             font-family: var(--font-primary);
             line-height: 1.6;
-            color: var(--text-primary);
-            background: var(--secondary);
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #ffeaa7 0%, #81ecec 100%);
+            background-attachment: fixed;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Éléments décoratifs flottants */
+        body::before {
+            content: '🔧⚽🏒🔨⛸️';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 2rem;
+            opacity: 0.1;
+            pointer-events: none;
+            animation: float-icons 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes float-icons {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
         }
 
         /* Container principal */
@@ -51,22 +84,25 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1rem;
+            position: relative;
+            z-index: 2;
         }
 
-        /* Header minimaliste */
+        /* Header cartoon */
         .header {
             position: sticky;
             top: 0;
-            background: rgba(255, 255, 255, 0.98);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 4px solid var(--tertiary);
             z-index: 100;
             transition: var(--transition);
+            box-shadow: 0 8px 32px var(--shadow);
         }
 
         .header.scrolled {
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 0 4px 20px var(--shadow);
+            transform: scale(0.95);
+            border-radius: 0 0 var(--radius) var(--radius);
         }
 
         .header-content {
@@ -74,20 +110,35 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 0;
-            min-height: 70px;
+            min-height: 80px;
         }
 
         .logo {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 800;
-            color: var(--primary);
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--white);
             text-decoration: none;
-            letter-spacing: -0.02em;
+            text-shadow: 3px 3px 0px var(--text-dark);
             transition: var(--transition);
+            position: relative;
+        }
+
+        .logo::after {
+            content: '🔧';
+            position: absolute;
+            top: -10px;
+            right: -30px;
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-10deg) scale(1); }
+            50% { transform: rotate(10deg) scale(1.2); }
         }
 
         .logo:hover {
-            transform: scale(1.05);
+            transform: scale(1.1) rotate(-2deg);
+            color: var(--bg-light);
         }
 
         .nav {
@@ -97,68 +148,101 @@
         }
 
         .nav-link {
-            color: var(--text-primary);
+            color: var(--white);
             text-decoration: none;
             font-weight: 600;
-            padding: 0.5rem 0;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-small);
             position: relative;
             transition: var(--transition);
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: var(--transition);
+            border: 3px solid transparent;
         }
 
         .nav-link:hover {
-            color: var(--accent);
+            transform: translateY(-5px) scale(1.05);
+            background: var(--white);
+            color: var(--primary);
+            border-color: var(--tertiary);
+            box-shadow: 0 10px 25px var(--shadow-hover);
         }
 
-        .nav-link:hover::after {
-            width: 100%;
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: var(--gradient-cool);
+            border-radius: var(--radius-small);
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::before {
+            opacity: 1;
+            animation: pulse-border 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .admin-btn {
-            padding: 0.75rem 1.5rem;
-            background: var(--primary);
-            color: white;
+            padding: 1rem 1.5rem;
+            background: var(--gradient-warm);
+            color: var(--white);
             text-decoration: none;
-            border-radius: var(--radius);
-            font-weight: 600;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: var(--bounce);
+            border: 3px solid var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-btn::before {
+            content: '🚀';
+            position: absolute;
+            left: -30px;
             transition: var(--transition);
-            border: none;
-            cursor: pointer;
         }
 
         .admin-btn:hover {
-            background: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px var(--shadow-hover);
+            transform: translateY(-8px) rotate(5deg) scale(1.1);
+            box-shadow: 0 15px 35px var(--shadow-hover);
         }
 
-        /* Menu mobile */
+        .admin-btn:hover::before {
+            left: 10px;
+        }
+
+        /* Menu mobile cartoon */
         .mobile-menu {
             display: none;
             flex-direction: column;
             position: fixed;
-            top: 70px;
+            top: 80px;
             left: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
+            background: var(--gradient-fun);
             padding: 2rem;
             transform: translateY(-100%);
-            transition: var(--transition);
+            transition: var(--bounce);
+            border-radius: 0 0 var(--radius) var(--radius);
         }
 
         .mobile-menu.active {
             transform: translateY(0);
+        }
+
+        .mobile-menu .nav-link {
+            margin: 0.5rem 0;
+            text-align: center;
+            font-size: 1.2rem;
         }
 
         .hamburger {
@@ -169,15 +253,21 @@
         }
 
         .hamburger span {
-            width: 25px;
-            height: 2px;
-            background: var(--primary);
+            width: 30px;
+            height: 4px;
+            background: var(--white);
+            border-radius: 2px;
             transition: var(--transition);
         }
 
-        /* Hero section */
+        .hamburger:hover span {
+            background: var(--bg-light);
+            transform: scale(1.1);
+        }
+
+        /* Hero section cartoon */
         .hero {
-            min-height: 80vh;
+            min-height: 90vh;
             display: flex;
             align-items: center;
             position: relative;
@@ -187,185 +277,299 @@
         .hero::before {
             content: '';
             position: absolute;
-            top: 0;
+            top: -50%;
             right: -50%;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient);
-            opacity: 0.05;
-            transform: skewX(-15deg);
-            animation: float 6s ease-in-out infinite;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate-bg 20s linear infinite;
         }
 
-        @keyframes float {
-            0%, 100% { transform: skewX(-15deg) translateY(0px); }
-            50% { transform: skewX(-15deg) translateY(-20px); }
+        @keyframes rotate-bg {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .hero-content {
             position: relative;
             z-index: 2;
+            text-align: center;
         }
 
         .hero-subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            font-weight: 500;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            font-weight: 600;
             margin-bottom: 1rem;
             opacity: 0;
-            animation: slideUp 1s ease-out 0.3s forwards;
+            animation: bounceIn 1s ease-out 0.3s forwards;
+            font-family: var(--font-secondary);
         }
 
         .hero-title {
-            font-size: clamp(2.5rem, 8vw, 6rem);
-            font-weight: 900;
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 700;
             line-height: 0.9;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            background: var(--gradient-warm);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             opacity: 0;
-            animation: slideUp 1s ease-out 0.6s forwards;
+            animation: bounceIn 1s ease-out 0.6s forwards;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .hero-title::after {
+            content: '🏒⚡';
+            position: absolute;
+            top: -20px;
+            right: -50px;
+            font-size: 0.5em;
+            animation: bounce-emojis 3s ease-in-out infinite;
+        }
+
+        @keyframes bounce-emojis {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
 
         .hero-description {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
+            font-size: 1.3rem;
+            color: var(--text-dark);
             max-width: 600px;
-            margin-bottom: 2rem;
+            margin: 0 auto 2rem;
             opacity: 0;
-            animation: slideUp 1s ease-out 0.9s forwards;
+            animation: bounceIn 1s ease-out 0.9s forwards;
+            font-family: var(--font-secondary);
+            font-weight: 600;
         }
 
         .cta-button {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            background: var(--accent);
-            color: white;
+            gap: 0.8rem;
+            padding: 1.5rem 3rem;
+            background: var(--gradient-cool);
+            color: var(--white);
             text-decoration: none;
-            border-radius: var(--radius);
-            font-weight: 600;
-            transition: var(--transition);
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: var(--bounce);
             opacity: 0;
-            animation: slideUp 1s ease-out 1.2s forwards;
+            animation: bounceIn 1s ease-out 1.2s forwards;
+            border: 4px solid var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: var(--transition);
         }
 
         .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px var(--shadow-hover);
+            transform: translateY(-10px) scale(1.1);
+            box-shadow: 0 20px 40px var(--shadow-hover);
         }
 
-        @keyframes slideUp {
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        @keyframes bounceIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(50px) scale(0.8);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
-        /* Sections */
+        /* Sections cartoon */
         .section {
-            padding: 4rem 0;
+            padding: 5rem 0;
             position: relative;
         }
 
         .section-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
         }
 
         .section-title {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 800;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
             margin-bottom: 1rem;
+            color: var(--primary);
+            text-shadow: 3px 3px 0px var(--white);
             position: relative;
+            display: inline-block;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 8px;
+            background: var(--gradient-cool);
+            border-radius: 4px;
+            animation: expand-line 2s ease-out;
+        }
+
+        @keyframes expand-line {
+            from { width: 0%; }
+            to { width: 80%; }
         }
 
         .section-subtitle {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
+            font-size: 1.2rem;
+            color: var(--text-dark);
             max-width: 600px;
             margin: 0 auto;
+            font-family: var(--font-secondary);
+            font-weight: 600;
         }
 
-        /* Stats Grid */
+        /* Stats Grid cartoon */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
-            margin: 3rem 0;
+            margin: 4rem 0;
         }
 
         .stat-card {
-            background: white;
-            padding: 2rem;
+            background: var(--white);
+            padding: 2.5rem;
             border-radius: var(--radius);
-            box-shadow: 0 4px 20px var(--shadow);
             text-align: center;
-            transition: var(--transition);
-            border: 1px solid var(--border);
+            transition: var(--bounce);
+            border: 4px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:nth-child(1) { border-color: var(--primary); }
+        .stat-card:nth-child(2) { border-color: var(--tertiary); }
+        .stat-card:nth-child(3) { border-color: var(--purple); }
+        .stat-card:nth-child(4) { border-color: var(--pink); }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--bg-light), transparent);
+            animation: rotate-border 4s linear infinite;
+            opacity: 0;
+        }
+
+        .stat-card:hover::before {
+            opacity: 0.5;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px var(--shadow-hover);
+            transform: translateY(-15px) rotate(5deg) scale(1.05);
+            box-shadow: 0 25px 50px var(--shadow-hover);
         }
 
         .stat-number {
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-            font-family: var(--font-mono);
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
         }
 
+        .stat-card:nth-child(1) .stat-number { color: var(--primary); }
+        .stat-card:nth-child(2) .stat-number { color: var(--tertiary); }
+        .stat-card:nth-child(3) .stat-number { color: var(--purple); }
+        .stat-card:nth-child(4) .stat-number { color: var(--pink); }
+
         .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
+            font-size: 1.1rem;
+            color: var(--text-dark);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            position: relative;
+            z-index: 2;
         }
 
         .stat-description {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-light);
-            margin-top: 0.5rem;
+            margin-top: 0.8rem;
+            font-family: var(--font-secondary);
+            position: relative;
+            z-index: 2;
         }
 
-        /* Player Cards */
+        /* Player Cards cartoon */
         .players-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
         }
 
         .player-card {
-            background: white;
+            background: var(--white);
             border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 4px 20px var(--shadow);
-            transition: var(--transition);
-            border: 1px solid var(--border);
+            transition: var(--bounce);
+            border: 4px solid var(--tertiary);
+            position: relative;
+            transform: rotate(-2deg);
+        }
+
+        .player-card:nth-child(even) {
+            transform: rotate(2deg);
         }
 
         .player-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 50px var(--shadow-hover);
+            transform: translateY(-20px) scale(1.08) rotate(0deg);
+            box-shadow: 0 30px 60px var(--shadow-hover);
+            border-color: var(--primary);
         }
 
         .player-image {
             width: 100%;
-            height: 250px;
+            height: 280px;
             overflow: hidden;
             position: relative;
+            background: var(--gradient-fun);
+        }
+
+        .player-image::before {
+            content: '⭐';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 2rem;
+            animation: twinkle 2s ease-in-out infinite;
+            z-index: 3;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.5; transform: scale(1.3) rotate(180deg); }
         }
 
         .player-image img {
@@ -373,32 +577,40 @@
             height: 100%;
             object-fit: cover;
             transition: var(--transition);
+            border-radius: var(--radius-small) var(--radius-small) 0 0;
         }
 
         .player-card:hover .player-image img {
-            transform: scale(1.1);
+            transform: scale(1.2) rotate(5deg);
         }
 
         .player-info {
-            padding: 1.5rem;
+            padding: 2rem;
+            background: var(--white);
         }
 
         .player-name {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
+            color: var(--primary);
         }
 
         .player-position {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            font-family: var(--font-secondary);
+            font-weight: 600;
         }
 
         .player-stats {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
+            justify-content: space-around;
+            margin-bottom: 1.5rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-small);
+            padding: 1rem;
         }
 
         .player-stat {
@@ -406,189 +618,294 @@
         }
 
         .player-stat-number {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--accent);
-            font-family: var(--font-mono);
+            color: var(--primary);
         }
 
         .player-stat-label {
-            font-size: 0.7rem;
-            color: var(--text-light);
+            font-size: 0.8rem;
+            color: var(--text-dark);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            font-weight: 600;
         }
 
-        /* Matches */
+        .player-profile-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-warm);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            text-align: center;
+            display: block;
+            transition: var(--bounce);
+            border: 3px solid var(--white);
+        }
+
+        .player-profile-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px var(--shadow-hover);
+        }
+
+        /* Matches cartoon */
         .matches-list {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
         .match-item {
-            background: white;
+            background: var(--white);
             border-radius: var(--radius);
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 10px var(--shadow);
-            transition: var(--transition);
-            border-left: 4px solid var(--border);
-        }
-
-        .match-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 25px var(--shadow-hover);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--bounce);
+            border: 4px solid;
+            position: relative;
+            overflow: hidden;
         }
 
         .match-item.win {
-            border-left-color: var(--success);
+            border-color: var(--success);
+            background: linear-gradient(135deg, var(--white) 0%, rgba(150, 206, 180, 0.1) 100%);
         }
 
         .match-item.loss {
-            border-left-color: var(--error);
+            border-color: var(--error);
+            background: linear-gradient(135deg, var(--white) 0%, rgba(255, 107, 107, 0.1) 100%);
         }
 
         .match-item.tie {
-            border-left-color: var(--warning);
+            border-color: var(--warning);
+            background: linear-gradient(135deg, var(--white) 0%, rgba(254, 202, 87, 0.1) 100%);
+        }
+
+        .match-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+            transform: translateX(-100%);
+            transition: var(--transition);
+        }
+
+        .match-item:hover::before {
+            transform: translateX(100%);
+        }
+
+        .match-item:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px var(--shadow-hover);
         }
 
         .match-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .match-date {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--text-light);
+            font-family: var(--font-secondary);
+            font-weight: 600;
         }
 
         .match-result {
             font-weight: 700;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            color: var(--white);
+            position: relative;
         }
 
-        .match-result.win { background: var(--success); }
-        .match-result.loss { background: var(--error); }
-        .match-result.tie { background: var(--warning); }
+        .match-result.win {
+            background: var(--success);
+        }
+
+        .match-result.loss {
+            background: var(--error);
+        }
+
+        .match-result.tie {
+            background: var(--warning);
+        }
+
+        .match-result::after {
+            content: '🎉';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+        }
+
+        .match-result.loss::after {
+            content: '😢';
+        }
+
+        .match-result.tie::after {
+            content: '🤝';
+        }
 
         .match-teams {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
         }
 
         .match-score {
-            font-size: 2rem;
-            font-weight: 900;
-            font-family: var(--font-mono);
-            color: var(--accent);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 2px 2px 0px var(--white);
         }
 
-        /* News */
+        /* News cartoon */
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
         }
 
         .news-card {
-            background: white;
+            background: var(--white);
             border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 4px 20px var(--shadow);
-            transition: var(--transition);
-            border: 1px solid var(--border);
+            transition: var(--bounce);
+            border: 4px solid var(--quaternary);
+            transform: rotate(-1deg);
+        }
+
+        .news-card:nth-child(even) {
+            transform: rotate(1deg);
         }
 
         .news-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px var(--shadow-hover);
+            transform: translateY(-15px) scale(1.05) rotate(0deg);
+            box-shadow: 0 25px 50px var(--shadow-hover);
         }
 
         .news-content {
-            padding: 1.5rem;
+            padding: 2rem;
         }
 
         .news-date {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: var(--text-light);
-            margin-bottom: 0.5rem;
-            font-family: var(--font-mono);
+            margin-bottom: 1rem;
+            font-family: var(--font-secondary);
+            font-weight: 600;
         }
 
         .news-title {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 700;
             margin-bottom: 1rem;
             line-height: 1.3;
+            color: var(--primary);
         }
 
         .news-excerpt {
-            color: var(--text-secondary);
+            color: var(--text-dark);
             line-height: 1.6;
             margin-bottom: 1rem;
+            font-family: var(--font-secondary);
         }
 
         .news-author {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: var(--text-light);
             font-style: italic;
+            font-weight: 600;
         }
 
-        /* Footer */
+        .news-author::before {
+            content: '✍️ ';
+        }
+
+        /* Footer cartoon */
         .footer {
-            background: var(--primary);
-            color: rgba(255, 255, 255, 0.95);
-            padding: 3rem 0;
-            margin-top: 4rem;
+            background: var(--gradient-fun);
+            color: var(--white);
+            padding: 4rem 0 2rem;
+            margin-top: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '🏒⚡🔧🎉⭐';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 5rem;
+            opacity: 0.1;
+            animation: float-footer 15s ease-in-out infinite;
+        }
+
+        @keyframes float-footer {
+            0%, 100% { transform: translateX(-100px) rotate(0deg); }
+            50% { transform: translateX(100px) rotate(180deg); }
         }
 
         .footer-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            gap: 3rem;
+            position: relative;
+            z-index: 2;
         }
 
         .footer-section h3 {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--white);
+            font-size: 1.3rem;
         }
 
         .footer-section p,
         .footer-section a {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             text-decoration: none;
-            line-height: 1.6;
+            line-height: 1.8;
             transition: var(--transition);
+            font-family: var(--font-secondary);
+            font-weight: 500;
         }
 
         .footer-section a:hover {
-            color: #ffffff;
-            text-decoration: underline;
+            color: var(--bg-light);
+            transform: translateX(5px);
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            margin-top: 2rem;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            margin-top: 3rem;
             padding-top: 2rem;
             text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            position: relative;
+            z-index: 2;
+            font-family: var(--font-secondary);
         }
 
-        /* Animations de défilement */
+        /* Animations spéciales */
         .fade-in {
             opacity: 0;
-            transform: translateY(30px);
-            transition: var(--transition);
+            transform: translateY(50px);
+            transition: var(--bounce);
         }
 
         .fade-in.visible {
@@ -596,7 +913,7 @@
             transform: translateY(0);
         }
 
-        /* Responsive */
+        /* Responsive cartoon */
         @media (max-width: 768px) {
             .nav {
                 display: none;
@@ -611,13 +928,13 @@
             }
 
             .hero {
-                min-height: 70vh;
+                min-height: 80vh;
                 text-align: center;
             }
 
             .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 1.5rem;
             }
 
             .players-grid {
@@ -631,57 +948,39 @@
             .match-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.5rem;
+                gap: 1rem;
             }
 
             .section {
-                padding: 2rem 0;
+                padding: 3rem 0;
+            }
+
+            .hero-title::after {
+                right: -20px;
+                top: -10px;
             }
         }
 
-        /* Accessibilité */
+        /* Accessibilité avec style cartoon */
         @media (prefers-reduced-motion: reduce) {
             * {
-                animation-duration: 0.01ms !important;
+                animation-duration: 0.5s !important;
                 animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
             }
         }
 
-        /* Mode sombre */
+        /* Mode sombre cartoon */
         @media (prefers-color-scheme: dark) {
             :root {
-                --primary: #f5f5f5;
-                --secondary: #1a1a1a;
-                --text-primary: #f5f5f5;
-                --text-secondary: #b2bec3;
-                --border: #333;
-                --shadow: rgba(255, 255, 255, 0.08);
+                --bg-light: #2d3436;
+                --white: #2d3436;
+                --text-dark: #ddd;
+                --text-light: #b2bec3;
             }
             
-            .header {
-                background: rgba(26, 26, 26, 0.98);
-                border-bottom-color: #333;
-            }
-
-            .header.scrolled {
-                background: rgba(26, 26, 26, 1);
-            }
-
-            .mobile-menu {
-                background: rgba(26, 26, 26, 1);
-            }
-
-            .logo {
-                color: #f5f5f5;
-            }
-
-            .nav-link {
-                color: #f5f5f5;
-            }
-
-            .nav-link:hover {
-                color: var(--accent);
+            body {
+                background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
             }
             
             .stat-card,
@@ -689,28 +988,54 @@
             .match-item,
             .news-card {
                 background: #2d3436;
-                border-color: #333;
-                color: #f5f5f5;
+                color: #ddd;
             }
+        }
 
-            .footer {
-                background: #0d1117;
-                color: rgba(255, 255, 255, 0.95);
-            }
+        /* Animations personnalisées */
+        @keyframes rotate-border {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
-            .footer-section h3 {
-                color: #ffffff;
-            }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
 
-            .footer-section p,
-            .footer-section a {
-                color: rgba(255, 255, 255, 0.9);
-            }
+        /* Easter eggs */
+        .logo:active {
+            animation: shake 0.5s ease-in-out;
+        }
 
-            .footer-bottom {
-                color: rgba(255, 255, 255, 0.8);
-                border-top-color: rgba(255, 255, 255, 0.2);
-            }
+        .stat-card:active {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        /* Hover effects spéciaux */
+        .cta-button:active {
+            transform: scale(0.95);
+        }
+
+        .player-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Animation spéciale pour les emojis */
+        @keyframes emoji-dance {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-10deg) scale(1.1); }
+            50% { transform: rotate(10deg) scale(0.9); }
+            75% { transform: rotate(-5deg) scale(1.05); }
+        }
+
+        /* Effets de particules */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            font-size: 1.2rem;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -722,18 +1047,18 @@
                 <a href="#" class="logo">Les Plombiers</a>
                 
                 <nav class="nav">
-                    <a href="#stats" class="nav-link">Statistiques</a>
-                    <a href="#joueurs" class="nav-link">Joueurs</a>
-                    <a href="#matchs" class="nav-link">Matchs</a>
-                    <a href="#nouvelles" class="nav-link">Nouvelles</a>
+                    <a href="#stats" class="nav-link">📊 Stats</a>
+                    <a href="#joueurs" class="nav-link">🏒 Joueurs</a>
+                    <a href="#matchs" class="nav-link">🥅 Matchs</a>
+                    <a href="#nouvelles" class="nav-link">📰 News</a>
                 </nav>
 
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     {% if current_user.is_authenticated %}
-                        <a href="/admin/" class="admin-btn">Tableau de bord</a>
-                        <a href="/auth/logout" class="admin-btn" style="background: var(--error);">Déconnexion</a>
+                        <a href="/admin/" class="admin-btn">🎛️ Admin</a>
+                        <a href="/auth/logout" class="admin-btn" style="background: var(--error);">👋 Sortie</a>
                     {% else %}
-                        <a href="/auth/login" class="admin-btn">Connexion</a>
+                        <a href="/auth/login" class="admin-btn">🔑 Connexion</a>
                     {% endif %}
                     
                     <div class="hamburger" onclick="toggleMobileMenu()">
@@ -746,10 +1071,10 @@
         </div>
 
         <nav class="mobile-menu" id="mobileMenu">
-            <a href="#stats" class="nav-link">Statistiques</a>
-            <a href="#joueurs" class="nav-link">Joueurs</a>
-            <a href="#matchs" class="nav-link">Matchs</a>
-            <a href="#nouvelles" class="nav-link">Nouvelles</a>
+            <a href="#stats" class="nav-link">📊 Statistiques</a>
+            <a href="#joueurs" class="nav-link">🏒 Joueurs</a>
+            <a href="#matchs" class="nav-link">🥅 Matchs</a>
+            <a href="#nouvelles" class="nav-link">📰 Nouvelles</a>
         </nav>
     </header>
 
@@ -757,15 +1082,15 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <div class="hero-subtitle">Hockey Club depuis 1994</div>
-                <h1 class="hero-title">Excellence sur glace</h1>
+                <div class="hero-subtitle">🏒 Club de Hockey depuis 1994 ⚡</div>
+                <h1 class="hero-title">Les Plombiers</h1>
                 <p class="hero-description">
-                    Suivez les performances de votre équipe favorite avec des statistiques en temps réel, 
-                    des profils de joueurs détaillés et toute l'actualité du club.
+                    🔧 On répare la glace, on casse la baraque ! 🔧<br>
+                    Suivez les aventures hilarantes de votre équipe favorite avec des stats qui décoiffent !
                 </p>
                 <a href="#stats" class="cta-button">
-                    Voir les stats
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    🚀 Voir nos exploits
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <path d="M7 17L17 7M17 7H7M17 7V17"/>
                     </svg>
                 </a>
@@ -778,37 +1103,37 @@
     <section class="section" id="stats">
         <div class="container">
             <div class="section-header fade-in">
-                <h2 class="section-title">Statistiques de l'équipe</h2>
+                <h2 class="section-title">🎯 Nos Stats de Fous !</h2>
                 <p class="section-subtitle">
-                    Performance globale de l'équipe cette saison
+                    🔥 Parce qu'on aime les chiffres autant que les buts ! 🔥
                 </p>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card fade-in">
                     <div class="stat-number">{{ team_stats.total_goals or 0 }}</div>
-                    <div class="stat-label">Buts totaux</div>
-                    <div class="stat-description">Marqués cette saison</div>
+                    <div class="stat-label">🥅 Buts Totaux</div>
+                    <div class="stat-description">Et on compte pas s'arrêter !</div>
                 </div>
                 <div class="stat-card fade-in">
                     <div class="stat-number">{{ team_stats.total_assists or 0 }}</div>
-                    <div class="stat-label">Passes totales</div>
-                    <div class="stat-description">Distribuées cette saison</div>
+                    <div class="stat-label">🎯 Passes Décisives</div>
+                    <div class="stat-description">Le travail d'équipe, ça paye !</div>
                 </div>
                 <div class="stat-card fade-in">
                     <div class="stat-number">{{ team_stats.total_points or 0 }}</div>
-                    <div class="stat-label">Points totaux</div>
-                    <div class="stat-description">Buts + Passes</div>
+                    <div class="stat-label">⚡ Points Totaux</div>
+                    <div class="stat-description">Mathématiques + Hockey = Magic</div>
                 </div>
                 <div class="stat-card fade-in">
                     {% if team_stats.top_scorer %}
                     <div class="stat-number">{{ team_stats.top_scorer.goals }}</div>
-                    <div class="stat-label">Meilleur marqueur</div>
-                    <div class="stat-description">{{ team_stats.top_scorer.name }}</div>
+                    <div class="stat-label">👑 Roi du But</div>
+                    <div class="stat-description">{{ team_stats.top_scorer.name }} règne !</div>
                     {% else %}
-                    <div class="stat-number">—</div>
-                    <div class="stat-label">Meilleur marqueur</div>
-                    <div class="stat-description">À déterminer</div>
+                    <div class="stat-number">🤷</div>
+                    <div class="stat-label">👑 Roi du But</div>
+                    <div class="stat-description">Le trône est vacant !</div>
                     {% endif %}
                 </div>
             </div>
@@ -821,9 +1146,9 @@
     <section class="section" id="joueurs">
         <div class="container">
             <div class="section-header fade-in">
-                <h2 class="section-title">Joueurs vedettes</h2>
+                <h2 class="section-title">🌟 Nos Héros sur Glace</h2>
                 <p class="section-subtitle">
-                    Découvrez les talents qui font la force de notre équipe
+                    🦸 Rencontrez les super-héros qui font trembler les filets adverses ! 🦸
                 </p>
             </div>
 
@@ -832,29 +1157,29 @@
                 <div class="player-card fade-in">
                     <div class="player-image">
                         <img src="{{ player.image_url }}" alt="{{ player.name }}" 
-                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI1MCIgdmlld0JveD0iMCAwIDMwMCAyNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9IjE1MCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiNEREQiLz4KPHBhdGggZD0iTTEwMCAxNzBIMjAwVjIwMEgxMDBWMTcwWiIgZmlsbD0iI0RERCIvPgo8L3N2Zz4K'">
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjI4MCIgdmlld0JveD0iMCAwIDMyMCAyODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjgwIiBmaWxsPSIjNGVjZGM0Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEyMCIgcj0iNDAiIGZpbGw9IiNmZmZmZmYiLz4KPGVsbGlwc2UgY3g9IjE0NSIgY3k9IjExMCIgcng9IjUiIHJ5PSI4IiBmaWxsPSIjMmQzNDM2Ii8+CjxlbGxpcHNlIGN4PSIxNzUiIGN5PSIxMTAiIHJ4PSI1IiByeT0iOCIgZmlsbD0iIzJkMzQzNiIvPgo8cGF0aCBkPSJNMTQwIDEzNVE1MCAxNTAgMTgwIDEzNSIgc3Ryb2tlPSIjMmQzNDM2IiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz4KPHJlY3QgeD0iMTEwIiB5PSIxODAiIHdpZHRoPSIxMDAiIGhlaWdodD0iODAiIGZpbGw9IiNmZjZiMzUiLz4KPHRLEHU+8J+UpSBKb3VldXIgPC90ZXh0Pgo8L3N2Zz4K'">
                     </div>
                     <div class="player-info">
                         <h3 class="player-name">{{ player.name }}</h3>
                         <div class="player-position">
-                            #{{ player.jersey_number or 'N/A' }} • {{ player.position }}
+                            🏒 #{{ player.jersey_number or '?' }} • {{ player.position }}
                         </div>
                         <div class="player-stats">
                             <div class="player-stat">
                                 <div class="player-stat-number">{{ player.goals }}</div>
-                                <div class="player-stat-label">Buts</div>
+                                <div class="player-stat-label">🥅 Buts</div>
                             </div>
                             <div class="player-stat">
                                 <div class="player-stat-number">{{ player.assists }}</div>
-                                <div class="player-stat-label">Passes</div>
+                                <div class="player-stat-label">🎯 Passes</div>
                             </div>
                             <div class="player-stat">
                                 <div class="player-stat-number">{{ player.points }}</div>
-                                <div class="player-stat-label">Points</div>
+                                <div class="player-stat-label">⚡ Points</div>
                             </div>
                         </div>
-                        <a href="/player/{{ player.id }}" class="cta-button" style="font-size: 0.9rem; padding: 0.75rem 1.5rem;">
-                            Voir le profil
+                        <a href="/player/{{ player.id }}" class="player-profile-btn">
+                            🔍 Voir le profil complet
                         </a>
                     </div>
                 </div>
@@ -869,29 +1194,29 @@
     <section class="section" id="matchs">
         <div class="container">
             <div class="section-header fade-in">
-                <h2 class="section-title">Matchs récents</h2>
+                <h2 class="section-title">⚔️ Nos Derniers Combats</h2>
                 <p class="section-subtitle">
-                    Résultats des dernières rencontres
+                    🔥 Revivez l'intensité de nos dernières batailles sur glace ! ⚔️
                 </p>
             </div>
 
             <div class="matches-list">
                 {% for match in recent_matches %}
-                <div class="match-item {{ match.result.lower() if match.result == 'W' else 'loss' if match.result == 'L' else 'tie' }} fade-in">
+                <div class="match-item {{ 'win' if match.result == 'W' else 'loss' if match.result == 'L' else 'tie' }} fade-in">
                     <div class="match-header">
-                        <div class="match-date">{{ match.date.strftime('%d %B %Y') }}</div>
-                        <div class="match-result {{ match.result.lower() if match.result == 'W' else 'loss' if match.result == 'L' else 'tie' }}">
-                            {{ 'Victoire' if match.result == 'W' else 'Défaite' if match.result == 'L' else 'Match nul' }}
+                        <div class="match-date">📅 {{ match.date.strftime('%d %B %Y') }}</div>
+                        <div class="match-result {{ 'win' if match.result == 'W' else 'loss' if match.result == 'L' else 'tie' }}">
+                            {{ 'VICTOIRE!' if match.result == 'W' else 'DÉFAITE...' if match.result == 'L' else 'ÉGALITÉ!' }}
                         </div>
                     </div>
                     <div class="match-teams">
-                        Les Plombiers vs {{ match.opponent }}
+                        🔧 Les Plombiers vs {{ match.opponent }} 🏒
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div class="match-score">{{ match.score_display }}</div>
-                        <div style="color: var(--text-secondary); font-size: 0.9rem;">
-                            {% if match.home_game %}🏠 Domicile{% else %}✈️ Extérieur{% endif %}
-                            {% if match.venue %} • {{ match.venue }}{% endif %}
+                        <div style="color: var(--text-light); font-size: 1rem; font-weight: 600;">
+                            {% if match.home_game %}🏠 À la maison{% else %}✈️ En déplacement{% endif %}
+                            {% if match.venue %}<br>📍 {{ match.venue }}{% endif %}
                         </div>
                     </div>
                 </div>
@@ -906,9 +1231,9 @@
     <section class="section" id="nouvelles">
         <div class="container">
             <div class="section-header fade-in">
-                <h2 class="section-title">Dernières nouvelles</h2>
+                <h2 class="section-title">📢 Les Potins du Vestiaire</h2>
                 <p class="section-subtitle">
-                    Restez informé de toute l'actualité du club
+                    🗞️ Toutes les infos croustillantes straight from the locker room ! 🗞️
                 </p>
             </div>
 
@@ -916,13 +1241,13 @@
                 {% for news in recent_news %}
                 <article class="news-card fade-in">
                     <div class="news-content">
-                        <div class="news-date">{{ news.created_at.strftime('%d %B %Y') }}</div>
+                        <div class="news-date">🕐 {{ news.created_at.strftime('%d %B %Y') }}</div>
                         <h3 class="news-title">{{ news.title }}</h3>
                         <p class="news-excerpt">
                             {% if news.excerpt %}
                                 {{ news.excerpt }}
                             {% else %}
-                                {{ news.content[:150] }}{% if news.content|length > 150 %}...{% endif %}
+                                {{ news.content[:150] }}{% if news.content|length > 150 %}... 🤔{% endif %}
                             {% endif %}
                         </p>
                         {% if news.author %}
@@ -936,52 +1261,85 @@
     </section>
     {% endif %}
 
+    <!-- Section Fun Facts -->
+    <section class="section" style="background: var(--bg-cream); border-radius: var(--radius); margin: 2rem 0;">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">🎪 Fun Facts des Plombiers</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div style="background: var(--white); padding: 2rem; border-radius: var(--radius); border: 4px solid var(--tertiary); text-align: center;">
+                    <div style="font-size: 3rem;">🔧</div>
+                    <h3 style="color: var(--primary); margin: 1rem 0;">Métier d'origine</h3>
+                    <p style="font-family: var(--font-secondary);">75% de l'équipe sont de vrais plombiers dans la vraie vie !</p>
+                </div>
+                <div style="background: var(--white); padding: 2rem; border-radius: var(--radius); border: 4px solid var(--purple); text-align: center;">
+                    <div style="font-size: 3rem;">🍕</div>
+                    <h3 style="color: var(--primary); margin: 1rem 0;">Pizza Power</h3>
+                    <p style="font-family: var(--font-secondary);">Record d'équipe: 47 pizzas dévorées après une victoire !</p>
+                </div>
+                <div style="background: var(--white); padding: 2rem; border-radius: var(--radius); border: 4px solid var(--pink); text-align: center;">
+                    <div style="font-size: 3rem;">🎵</div>
+                    <h3 style="color: var(--primary); margin: 1rem 0;">Hymne secret</h3>
+                    <p style="font-family: var(--font-secondary);">Notre cri de guerre: "Glou-glou, on débouche !"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Les Plombiers</h3>
-                    <p>Club de hockey fondé en 1994, nous cultivons l'excellence sportive et l'esprit d'équipe depuis près de 30 ans.</p>
+                    <h3>🔧 Les Plombiers</h3>
+                    <p>Depuis 1994, on répare les canalisations le jour et on démolit sur glace la nuit ! 💪</p>
+                    <p>Notre devise : "Pas de fuite, que des buts !" 🎯</p>
                 </div>
                 <div class="footer-section">
-                    <h3>Navigation</h3>
-                    <p><a href="#stats">Statistiques</a></p>
-                    <p><a href="#joueurs">Joueurs</a></p>
-                    <p><a href="#matchs">Matchs</a></p>
-                    <p><a href="#nouvelles">Nouvelles</a></p>
+                    <h3>🧭 Navigation</h3>
+                    <p><a href="#stats">📊 Nos performances</a></p>
+                    <p><a href="#joueurs">🏒 Notre équipe</a></p>
+                    <p><a href="#matchs">🥅 Nos batailles</a></p>
+                    <p><a href="#nouvelles">📰 Les potins</a></p>
                 </div>
                 <div class="footer-section">
-                    <h3>Contact</h3>
-                    <p>info@lesplombiers.com</p>
-                    <p>Québec, QC, Canada</p>
-                    <p>Suivez-nous sur les réseaux sociaux</p>
+                    <h3>📞 Contact</h3>
+                    <p>📧 info@lesplombiers.com</p>
+                    <p>📍 Québec, QC, Canada</p>
+                    <p>📱 1-800-PLOMBIER</p>
+                    <p>🌐 Suivez nos bêtises en ligne !</p>
                 </div>
                 <div class="footer-section">
-                    <h3>Saison 2024-2025</h3>
-                    <p>Calendrier complet disponible</p>
-                    <p>Billets en vente</p>
-                    <p>Partenaires officiels</p>
+                    <h3>🏆 Saison 2024-25</h3>
+                    <p>🎫 Billets dispo (apportez vos outils !)</p>
+                    <p>🤝 Partenaires : Rona, Home Depot</p>
+                    <p>🎯 Objectif : Réparer la coupe Stanley !</p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Les Plombiers Hockey Club. Tous droits réservés.</p>
+                <p>&copy; 2024 Les Plombiers Hockey Club 🔧 On débouche tout ! 🏒</p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript pour les interactions -->
+    <!-- JavaScript pour les interactions cartoon -->
     <script>
-        // Gestion du menu mobile
+        // Gestion du menu mobile avec bounce
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             const hamburger = document.querySelector('.hamburger');
             
             menu.classList.toggle('active');
             hamburger.classList.toggle('active');
+            
+            // Animation rigolote
+            if (menu.classList.contains('active')) {
+                menu.style.animation = 'bounceIn 0.6s ease-out';
+            }
         }
 
-        // Header qui change au scroll
+        // Header qui bouge au scroll
         window.addEventListener('scroll', () => {
             const header = document.getElementById('header');
             if (window.scrollY > 50) {
@@ -991,32 +1349,35 @@
             }
         });
 
-        // Animation de défilement pour les éléments
+        // Animation de défilement cartoon
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
 
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
+            entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                        entry.target.style.animation = `bounceIn 0.8s ease-out ${index * 0.1}s forwards`;
+                    }, index * 100);
                 }
             });
         }, observerOptions);
 
-        // Observer tous les éléments avec la classe fade-in
+        // Observer tous les éléments avec animation
         document.querySelectorAll('.fade-in').forEach(el => {
             observer.observe(el);
         });
 
-        // Navigation fluide
+        // Navigation fluide avec bounce
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    const headerHeight = 70;
+                    const headerHeight = 80;
                     const targetPosition = target.offsetTop - headerHeight;
                     
                     window.scrollTo({
@@ -1025,7 +1386,7 @@
                     });
                 }
                 
-                // Fermer le menu mobile si ouvert
+                // Fermer le menu mobile
                 const mobileMenu = document.getElementById('mobileMenu');
                 if (mobileMenu.classList.contains('active')) {
                     toggleMobileMenu();
@@ -1033,24 +1394,34 @@
             });
         });
 
-        // Micro-interactions pour les cartes
+        // Micro-interactions cartoon pour les cartes
         document.querySelectorAll('.stat-card, .player-card, .news-card').forEach(card => {
             card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-8px) scale(1.02)';
+                this.style.transform = 'translateY(-20px) scale(1.05) rotate(2deg)';
+                this.style.boxShadow = '0 30px 60px var(--shadow-hover)';
             });
             
             card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
+                this.style.transform = 'translateY(0) scale(1) rotate(0deg)';
+                this.style.boxShadow = 'none';
+            });
+
+            // Easter egg - clic pour animation rigolote
+            card.addEventListener('click', function() {
+                this.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 500);
             });
         });
 
-        // Animation des nombres (compteur)
+        // Animation des compteurs avec style cartoon
         function animateCounters() {
             const counters = document.querySelectorAll('.stat-number');
             
-            counters.forEach(counter => {
+            counters.forEach((counter, index) => {
                 const target = parseInt(counter.textContent);
-                const increment = target / 50;
+                const increment = Math.max(target / 60, 1);
                 let current = 0;
                 
                 if (target > 0) {
@@ -1059,21 +1430,36 @@
                         if (current >= target) {
                             counter.textContent = target;
                             clearInterval(timer);
+                            // Animation finale
+                            counter.style.animation = 'bounce-number 0.5s ease-out';
                         } else {
                             counter.textContent = Math.floor(current);
                         }
-                    }, 30);
+                    }, 50);
                 }
             });
         }
 
-        // Déclencher l'animation des compteurs quand la section stats est visible
+        // CSS pour l'animation bounce-number
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce-number {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.3); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Déclencher les compteurs
         const statsSection = document.getElementById('stats');
         if (statsSection) {
             const statsObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        animateCounters();
+                        setTimeout(() => {
+                            animateCounters();
+                        }, 500);
                         statsObserver.unobserve(entry.target);
                     }
                 });
@@ -1082,96 +1468,125 @@
             statsObserver.observe(statsSection);
         }
 
-        // Parallax léger pour le hero
+        // Parallax rigolo pour le hero
         window.addEventListener('scroll', () => {
             const hero = document.querySelector('.hero');
             const scrolled = window.pageYOffset;
-            const rate = scrolled * -0.3;
+            const rate = scrolled * -0.2;
             
             if (hero) {
                 hero.style.transform = `translateY(${rate}px)`;
             }
         });
 
-        // Gestion du mode sombre automatique
-        function detectColorScheme() {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.body.classList.add('dark-mode');
-            }
-        }
-
-        // Écouter les changements de mode
-        if (window.matchMedia) {
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                if (e.matches) {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
-            });
-        }
-
-        // Performance - Lazy loading des images
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src || img.src;
-                        img.classList.remove('lazy');
-                        imageObserver.unobserve(img);
-                    }
-                });
-            });
-
-            document.querySelectorAll('img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
-        }
-
-        // Accessibilité - Navigation au clavier
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                const mobileMenu = document.getElementById('mobileMenu');
-                if (mobileMenu.classList.contains('active')) {
-                    toggleMobileMenu();
-                }
-            }
-        });
-
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-            detectColorScheme();
+        // Easter eggs rigolos
+        let clickCount = 0;
+        document.querySelector('.logo').addEventListener('click', (e) => {
+            e.preventDefault();
+            clickCount++;
             
-            // Retarder légèrement les animations pour améliorer les performances
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-            }, 100);
+            if (clickCount === 5) {
+                alert('🎉 Félicitations ! Vous avez trouvé notre easter egg ! 🔧');
+                document.body.style.animation = 'rainbow 2s ease-in-out';
+                setTimeout(() => {
+                    document.body.style.animation = '';
+                    clickCount = 0;
+                }, 2000);
+            }
         });
 
-        // Service Worker pour la performance (optionnel)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch(registrationError => {
-                        console.log('SW registration failed: ', registrationError);
-                    });
+        // Animation rainbow pour easter egg
+        const rainbowStyle = document.createElement('style');
+        rainbowStyle.textContent = `
+            @keyframes rainbow {
+                0% { filter: hue-rotate(0deg); }
+                25% { filter: hue-rotate(90deg); }
+                50% { filter: hue-rotate(180deg); }
+                75% { filter: hue-rotate(270deg); }
+                100% { filter: hue-rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(rainbowStyle);
+
+        // Effets sonores imaginaires (feedback visuel)
+        document.querySelectorAll('.admin-btn, .cta-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.animation = 'bounce-click 0.3s ease-out';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 300);
             });
+        });
+
+        const bounceClickStyle = document.createElement('style');
+        bounceClickStyle.textContent = `
+            @keyframes bounce-click {
+                0% { transform: scale(1); }
+                50% { transform: scale(0.9); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(bounceClickStyle);
+
+        // Initialisation cartoon
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ajouter des étoiles qui scintillent
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    createSparkle();
+                }
+            }, 2000);
+        });
+
+        function createSparkle() {
+            const sparkles = ['✨', '⭐', '🌟', '💫', '🎉'];
+            const sparkle = document.createElement('div');
+            sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+            sparkle.style.position = 'fixed';
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            sparkle.style.fontSize = '1.5rem';
+            sparkle.style.zIndex = '1000';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.animation = 'sparkle-fade 3s ease-out forwards';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 3000);
         }
+
+        const sparkleStyle = document.createElement('style');
+        sparkleStyle.textContent = `
+            @keyframes sparkle-fade {
+                0% { 
+                    opacity: 1; 
+                    transform: scale(0) rotate(0deg); 
+                }
+                50% { 
+                    opacity: 1; 
+                    transform: scale(1.2) rotate(180deg); 
+                }
+                100% { 
+                    opacity: 0; 
+                    transform: scale(0) rotate(360deg); 
+                }
+            }
+        `;
+        document.head.appendChild(sparkleStyle);
     </script>
 
-    <!-- Schema.org pour le SEO -->
+    <!-- Schema.org pour le SEO avec humour -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "SportsTeam",
-        "name": "Les Plombiers",
-        "sport": "Hockey",
+        "name": "Les Plombiers Hockey Club",
+        "sport": "Hockey sur glace",
         "foundingDate": "1994",
-        "description": "Club de hockey fondé en 1994, nous cultivons l'excellence sportive et l'esprit d'équipe.",
+        "description": "Club de hockey québécois composé principalement de plombiers. On répare les canalisations le jour, on démolit sur glace la nuit !",
+        "slogan": "Pas de fuite, que des buts !",
         "address": {
             "@type": "PostalAddress",
             "addressRegion": "QC",
