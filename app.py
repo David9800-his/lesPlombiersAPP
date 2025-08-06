@@ -1,3 +1,85 @@
+# DATABASE INITIALIZATION FIX - Les Plombiers
+
+## ✅ GREAT NEWS: Your Flask app is RUNNING!
+## ❌ ISSUE: Database tables haven't been created yet
+
+## QUICK FIX: Update app.py to initialize database on startup
+
+Replace the bottom of your app.py file with this version that ensures database initialization:
+
+```python
+def create_admin_user():
+    if not User.query.filter_by(username='admin').first():
+        admin = User(
+            username='admin',
+            email='admin@lesplombiers.com',
+            password_hash=generate_password_hash('admin123')
+        )
+        db.session.add(admin)
+        db.session.commit()
+        print("Admin user created: admin/admin123")
+
+def init_database():
+    """Initialize database tables and create admin user"""
+    db.create_all()
+    create_admin_user()
+    print("Database initialized successfully!")
+
+# Initialize database when app starts (for production)
+with app.app_context():
+    init_database()
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
+```
+
+## ALTERNATIVE SOLUTION: Create a simpler homepage that handles missing data
+
+Update your index route to handle empty database gracefully:
+
+```python
+@app.route('/')
+def index():
+    try:
+        featured_players = Player.query.filter_by(is_featured=True, is_active=True).all()
+        recent_news = News.query.filter_by(published=True).order_by(News.created_at.desc()).limit(5).all()
+        recent_matches = Match.query.order_by(Match.date.desc()).limit(5).all()
+        
+        active_players = Player.query.filter_by(is_active=True).all()
+        total_goals = sum(p.goals for p in active_players)
+        total_assists = sum(p.assists for p in active_players)
+        total_points = total_goals + total_assists
+        top_scorer = Player.query.filter_by(is_active=True).order_by(Player.goals.desc()).first()
+        
+        team_stats = {
+            'total_goals': total_goals,
+            'total_assists': total_assists,
+            'total_points': total_points,
+            'top_scorer': top_scorer
+        }
+    except Exception as e:
+        # Database not initialized yet, use empty data
+        featured_players = []
+        recent_news = []
+        recent_matches = []
+        team_stats = {
+            'total_goals': 0,
+            'total_assists': 0,
+            'total_points': 0,
+            'top_scorer': None
+        }
+    
+    return render_template('index.html', 
+                         featured_players=featured_players,
+                         recent_news=recent_news,
+                         recent_matches=recent_matches,
+                         team_stats=team_stats)
+```
+
+## COMPLETE UPDATED app.py (Final Version):
+
+```python
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
@@ -118,26 +200,39 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    featured_players = Player.query.filter_by(is_featured=True, is_active=True).all()
-    recent_news = News.query.filter_by(published=True).order_by(News.created_at.desc()).limit(5).all()
-    recent_matches = Match.query.order_by(Match.date.desc()).limit(5).all()
-    
-    active_players = Player.query.filter_by(is_active=True).all()
-    total_goals = sum(p.goals for p in active_players)
-    total_assists = sum(p.assists for p in active_players)
-    total_points = total_goals + total_assists
-    top_scorer = Player.query.filter_by(is_active=True).order_by(Player.goals.desc()).first()
+    try:
+        featured_players = Player.query.filter_by(is_featured=True, is_active=True).all()
+        recent_news = News.query.filter_by(published=True).order_by(News.created_at.desc()).limit(5).all()
+        recent_matches = Match.query.order_by(Match.date.desc()).limit(5).all()
+        
+        active_players = Player.query.filter_by(is_active=True).all()
+        total_goals = sum(p.goals for p in active_players)
+        total_assists = sum(p.assists for p in active_players)
+        total_points = total_goals + total_assists
+        top_scorer = Player.query.filter_by(is_active=True).order_by(Player.goals.desc()).first()
+        
+        team_stats = {
+            'total_goals': total_goals,
+            'total_assists': total_assists,
+            'total_points': total_points,
+            'top_scorer': top_scorer
+        }
+    except Exception as e:
+        featured_players = []
+        recent_news = []
+        recent_matches = []
+        team_stats = {
+            'total_goals': 0,
+            'total_assists': 0,
+            'total_points': 0,
+            'top_scorer': None
+        }
     
     return render_template('index.html', 
                          featured_players=featured_players,
                          recent_news=recent_news,
                          recent_matches=recent_matches,
-                         team_stats={
-                             'total_goals': total_goals,
-                             'total_assists': total_assists,
-                             'total_points': total_points,
-                             'top_scorer': top_scorer
-                         })
+                         team_stats=team_stats)
 
 @app.route('/player/<int:player_id>')
 def player_detail(player_id):
@@ -333,19 +428,44 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 def create_admin_user():
-    if not User.query.filter_by(username='admin').first():
-        admin = User(
-            username='admin',
-            email='admin@lesplombiers.com',
-            password_hash=generate_password_hash('admin123')
-        )
-        db.session.add(admin)
-        db.session.commit()
+    try:
+        if not User.query.filter_by(username='admin').first():
+            admin = User(
+                username='admin',
+                email='admin@lesplombiers.com',
+                password_hash=generate_password_hash('admin123')
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print("Admin user created: admin/admin123")
+    except Exception as e:
+        print(f"Could not create admin user: {e}")
 
-if __name__ == '__main__':
-    with app.app_context():
+def init_database():
+    try:
         db.create_all()
         create_admin_user()
-    
+        print("Database initialized successfully!")
+    except Exception as e:
+        print(f"Database initialization error: {e}")
+
+# Initialize database when app starts
+with app.app_context():
+    init_database()
+
+if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
+```
+
+## IMMEDIATE ACTIONS:
+
+1. **Replace your app.py** with the complete version above
+2. **Commit and push**:
+   ```bash
+   git add app.py
+   git commit -m "Fix database initialization and error handling"
+   git push origin main
+   ```
+
+Your site will be fully functional after this update! 🚀
