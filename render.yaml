@@ -1,9 +1,11 @@
 services:
   - type: web
-    name: lesplombiers-site
+    name: les-plombiers-hockey
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python agent_stats_hockey.py
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     envVars:
-      - key: PORT
-        value: 10000
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production

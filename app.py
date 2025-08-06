@@ -1,10 +1,43 @@
-# DEPLOYMENT FIX - Les Plombiers Hockey Stats App
+# IMMEDIATE DEPLOYMENT FIX - Les Plombiers
 
-## PROBLEM IDENTIFIED:
-The deployment failed because HTML content was mixed into the Python file. 
-Here are the corrected, separate files:
+## PROBLEM: Render is trying to run the wrong file
+The error shows Render is running `python hockey_stats_app.py` but this file has mixed content.
+We need to fix the startup command and file structure.
 
-## FILE 1: app.py (Main Flask Application)
+## SOLUTION 1: Fix render.yaml (RECOMMENDED)
+
+Create or update your `render.yaml` file:
+
+```yaml
+services:
+  - type: web
+    name: les-plombiers-hockey
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production
+```
+
+## SOLUTION 2: Update requirements.txt (REQUIRED)
+
+Make sure your `requirements.txt` file contains:
+
+```txt
+Flask==3.1.1
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+Werkzeug==3.1.3
+gunicorn==21.2.0
+```
+
+## SOLUTION 3: Clean app.py (CRITICAL)
+
+Replace your entire `app.py` file with this clean version:
+
 ```python
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory, send_file
 from flask_sqlalchemy import SQLAlchemy
@@ -23,17 +56,17 @@ app = Flask(__name__)
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hockey-stats-secret-key-1994'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///hockey_stats.db'
+    if SQLALCHEMY_DATABASE_URI.startswith('postgres://'):
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgres://', 'postgresql://', 1)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static', 'images', 'uploads')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    
-    @staticmethod
-    def init_app(app):
-        os.makedirs(app.config.get('UPLOAD_FOLDER', ''), exist_ok=True)
 
 app.config.from_object(Config)
-Config.init_app(app)
+
+# Create upload folder
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Initialize extensions
 db = SQLAlchemy(app)
@@ -45,7 +78,6 @@ login_manager.login_message = 'Please log in to access the admin panel.'
 # Models
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
-    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -53,13 +85,9 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
     is_active = db.Column(db.Boolean, default=True)
-    
-    def __repr__(self):
-        return f'<User {self.username}>'
 
 class Player(db.Model):
     __tablename__ = 'players'
-    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     position = db.Column(db.String(50), nullable=False)
@@ -68,19 +96,13 @@ class Player(db.Model):
     height = db.Column(db.String(10))
     weight = db.Column(db.Integer)
     hometown = db.Column(db.String(100))
-    
-    # Stats
     goals = db.Column(db.Integer, default=0)
     assists = db.Column(db.Integer, default=0)
     penalty_minutes = db.Column(db.Integer, default=0)
     games_played = db.Column(db.Integer, default=0)
     plus_minus = db.Column(db.Integer, default=0)
-    
-    # Media
     image_filename = db.Column(db.String(200))
     bio = db.Column(db.Text)
-    
-    # Metadata
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
@@ -95,13 +117,9 @@ class Player(db.Model):
         if self.image_filename:
             return f'/uploads/{self.image_filename}'
         return '/static/images/default_player.png'
-    
-    def __repr__(self):
-        return f'<Player {self.name} #{self.jersey_number}>'
 
 class Match(db.Model):
     __tablename__ = 'matches'
-    
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
     opponent = db.Column(db.String(100), nullable=False)
@@ -110,7 +128,6 @@ class Match(db.Model):
     opponent_score = db.Column(db.Integer, default=0)
     venue = db.Column(db.String(100))
     notes = db.Column(db.Text)
-    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     @property
@@ -128,18 +145,15 @@ class Match(db.Model):
 
 class News(db.Model):
     __tablename__ = 'news'
-    
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
     excerpt = db.Column(db.String(500))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     published = db.Column(db.Boolean, default=True)
     featured = db.Column(db.Boolean, default=False)
-    
     author = db.relationship('User', backref=db.backref('news_posts', lazy=True))
 
 @login_manager.user_loader
@@ -152,22 +166,14 @@ def allowed_file(filename):
 # Routes
 @app.route('/')
 def index():
-    # Get featured players for carousel
     featured_players = Player.query.filter_by(is_featured=True, is_active=True).all()
-    
-    # Get recent news
     recent_news = News.query.filter_by(published=True).order_by(News.created_at.desc()).limit(5).all()
-    
-    # Get recent matches
     recent_matches = Match.query.order_by(Match.date.desc()).limit(5).all()
     
-    # Team stats
     active_players = Player.query.filter_by(is_active=True).all()
     total_goals = sum(p.goals for p in active_players)
     total_assists = sum(p.assists for p in active_players)
     total_points = total_goals + total_assists
-    
-    # Top scorer
     top_scorer = Player.query.filter_by(is_active=True).order_by(Player.goals.desc()).first()
     
     return render_template('index.html', 
@@ -186,27 +192,11 @@ def player_detail(player_id):
     player = Player.query.get_or_404(player_id)
     return render_template('player_detail.html', player=player)
 
-@app.route('/api/players')
-def api_players():
-    players = Player.query.filter_by(is_active=True).all()
-    return jsonify([{
-        'id': p.id,
-        'name': p.name,
-        'position': p.position,
-        'jersey_number': p.jersey_number,
-        'goals': p.goals,
-        'assists': p.assists,
-        'points': p.points,
-        'image_url': p.image_url
-    } for p in players])
-
-# Authentication routes
 @app.route('/auth/login', methods=['GET', 'POST'])
 def auth_login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
         user = User.query.filter_by(username=username).first()
         
         if user and check_password_hash(user.password_hash, password):
@@ -227,7 +217,6 @@ def auth_logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('index'))
 
-# Admin routes
 @app.route('/admin/')
 @login_required
 def admin_dashboard():
@@ -252,7 +241,6 @@ def admin_players():
 @login_required
 def admin_add_player():
     if request.method == 'POST':
-        # Handle file upload
         image_filename = None
         if 'image' in request.files:
             file = request.files['image']
@@ -292,7 +280,6 @@ def admin_add_player():
 def admin_delete_player(player_id):
     player = Player.query.get_or_404(player_id)
     
-    # Delete image file if exists
     if player.image_filename:
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], player.image_filename)
         if os.path.exists(file_path):
@@ -364,13 +351,11 @@ def admin_export_players():
     output = io.StringIO()
     writer = csv.writer(output)
     
-    # Write header
     writer.writerow([
         'Name', 'Position', 'Jersey #', 'Age', 'Height', 'Weight',
         'Hometown', 'Goals', 'Assists', 'Points', 'PIM', 'Games Played', '+/-'
     ])
     
-    # Write player data
     for player in players:
         writer.writerow([
             player.name, player.position, player.jersey_number,
@@ -380,8 +365,6 @@ def admin_export_players():
         ])
     
     output.seek(0)
-    
-    # Create a BytesIO object for send_file
     output_bytes = io.BytesIO()
     output_bytes.write(output.getvalue().encode('utf-8'))
     output_bytes.seek(0)
@@ -398,7 +381,6 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 def create_admin_user():
-    """Create default admin user if none exists"""
     if not User.query.filter_by(username='admin').first():
         admin = User(
             username='admin',
@@ -407,55 +389,33 @@ def create_admin_user():
         )
         db.session.add(admin)
         db.session.commit()
-        print("Default admin user created: admin/admin123")
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         create_admin_user()
-    app.run(debug=True)
+    
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
 ```
 
-## FILE 2: requirements.txt
-```txt
-Flask==3.1.1
-Flask-SQLAlchemy==3.1.1
-Flask-Login==0.6.3
-Werkzeug==3.1.3
-gunicorn==21.2.0
-```
+## CRITICAL ACTIONS TO TAKE NOW:
 
-## FILE 3: render.yaml
-```yaml
-services:
-  - type: web
-    name: les-plombiers-hockey
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
-    envVars:
-      - key: SECRET_KEY
-        generateValue: true
-      - key: FLASK_ENV
-        value: production
-```
+1. **Delete the problematic file**:
+   ```bash
+   rm hockey_stats_app.py
+   ```
 
-## DEPLOYMENT INSTRUCTIONS:
+2. **Create/update the correct files**:
+   - Save the clean `app.py` above
+   - Make sure `render.yaml` uses `startCommand: gunicorn app:app --bind 0.0.0.0:$PORT`
+   - Update `requirements.txt` with the simplified dependencies
 
-1. **Replace your current `app.py` file** with the clean version above
-2. **Update your `requirements.txt`** with the simplified dependencies
-3. **Make sure your `render.yaml`** matches the configuration above
-4. **Commit and push** the changes:
+3. **Commit and push**:
+   ```bash
+   git add .
+   git commit -m "Fix: Use clean app.py and correct startup command"
+   git push origin main
+   ```
 
-```bash
-git add .
-git commit -m "Fix deployment - clean Python files"
-git push origin main
-```
-
-The deployment should now work correctly! The main issues were:
-- HTML content mixed into Python file
-- Unicode characters in wrong context
-- Missing proper imports and structure
-
-This clean version will deploy successfully on Render.com.
+The deployment should work immediately after this fix!
