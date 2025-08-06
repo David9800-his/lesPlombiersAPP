@@ -1,51 +1,6 @@
 # Les Plombiers - Retro Hockey Stats Web Application
 
 ## Project Structure
-```
-les_plombiers/
-├── app.py                 # Main application file
-├── config.py             # Configuration settings
-├── requirements.txt      # Python dependencies
-├── Makefile             # Build and deployment commands
-├── README.md            # Project documentation
-├── render.yaml          # Render.com deployment config
-├── models/
-│   ├── __init__.py
-│   ├── user.py          # User model for authentication
-│   ├── player.py        # Player model
-│   ├── match.py         # Match history model
-│   └── news.py          # News/posts model
-├── routes/
-│   ├── __init__.py
-│   ├── main.py          # Public routes
-│   ├── auth.py          # Authentication routes
-│   └── admin.py         # Admin/CMS routes
-├── admin/
-│   ├── __init__.py
-│   └── views.py         # Admin dashboard views
-├── static/
-│   ├── css/
-│   │   ├── retro.css    # 1994 Netscape styling
-│   │   └── admin.css    # Admin panel styling
-│   ├── js/
-│   │   ├── carousel.js  # Player carousel functionality
-│   │   └── admin.js     # Admin panel interactions
-│   └── images/
-│       ├── uploads/     # Player profile images
-│       └── retro/       # Retro design assets
-└── templates/
-    ├── base.html        # Base template
-    ├── index.html       # Homepage
-    ├── player_detail.html
-    ├── auth/
-    │   └── login.html   # Admin login
-    └── admin/
-        ├── dashboard.html
-        ├── players.html
-        ├── matches.html
-        ├── news.html
-        └── upload.html
-```
 
 ## File Contents
 
