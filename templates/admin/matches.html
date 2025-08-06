@@ -1,0 +1,43 @@
+## templates/admin/matches.html
+```html
+{% extends "base.html" %}
+
+{% block title %}Manage Matches - Les Plombiers{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>MANAGE MATCHES</h2>
+        <a href="{{ url_for('admin_add_match') }}" class="btn btn-primary">Add New Match</a>
+    </div>
+    
+    <div style="background-color: #ffffff; border: 2px solid #808080;">
+        <div style="background-color: #c0c0c0; padding: 10px; font-weight: bold; display: grid; grid-template-columns: 80px 1fr 100px 80px 50px; gap: 10px;">
+            <span>Date</span>
+            <span>Opponent</span>
+            <span>Venue</span>
+            <span>Score</span>
+            <span>Result</span>
+        </div>
+        
+        {% for match in matches %}
+        <div style="padding: 10px; border-bottom: 1px solid #cccccc; display: grid; grid-template-columns: 80px 1fr 100px 80px 50px; gap: 10px; align-items: center;">
+            <span>{{ match.date.strftime('%m/%d/%Y') }}</span>
+            <span>{{ match.opponent }}</span>
+            <span>{% if match.home_game %}HOME{% else %}AWAY{% endif %}</span>
+            <span>{{ match.score_display }}</span>
+            <span style="font-weight: bold; color: {% if match.result == 'W' %}green{% elif match.result == 'L' %}red{% else %}orange{% endif %};">
+                {{ match.result }}
+            </span>
+        </div>
+        {% endfor %}
+        
+        {% if not matches %}
+        <div style="padding: 20px; text-align: center;">
+            No matches recorded yet.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+```

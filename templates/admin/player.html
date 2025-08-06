@@ -1,0 +1,58 @@
+## templates/admin/players.html
+```html
+{% extends "base.html" %}
+
+{% block title %}Manage Players - Les Plombiers{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>MANAGE PLAYERS</h2>
+        <a href="{{ url_for('admin_add_player') }}" class="btn btn-primary">Add New Player</a>
+    </div>
+    
+    <div style="background-color: #ffffff; border: 2px solid #808080;">
+        <div style="background-color: #c0c0c0; padding: 10px; font-weight: bold; display: grid; grid-template-columns: 60px 1fr 100px 50px 60px 60px 60px 80px 100px; gap: 10px;">
+            <span>Photo</span>
+            <span>Name</span>
+            <span>Position</span>
+            <span>#</span>
+            <span>Goals</span>
+            <span>Assists</span>
+            <span>Points</span>
+            <span>Featured</span>
+            <span>Actions</span>
+        </div>
+        
+        {% for player in players %}
+        <div style="padding: 10px; border-bottom: 1px solid #cccccc; display: grid; grid-template-columns: 60px 1fr 100px 50px 60px 60px 60px 80px 100px; gap: 10px; align-items: center;">
+            <span>
+                <img src="{{ player.image_url }}" alt="{{ player.name }}" 
+                     style="width: 40px; height: 50px; object-fit: cover; border: 1px solid #cccccc;"
+                     onerror="this.src='/static/images/default_player.png'">
+            </span>
+            <span>{{ player.name }}</span>
+            <span>{{ player.position }}</span>
+            <span>{{ player.jersey_number or '-' }}</span>
+            <span>{{ player.goals }}</span>
+            <span>{{ player.assists }}</span>
+            <span>{{ player.points }}</span>
+            <span>{% if player.is_featured %}⭐{% else %}-{% endif %}</span>
+            <span>
+                <form method="POST" action="{{ url_for('admin_delete_player', player_id=player.id) }}" 
+                      style="display: inline;" onsubmit="return confirm('Are you sure?')">
+                    <button type="submit" class="btn" style="padding: 3px 6px; font-size: 10px;">Delete</button>
+                </form>
+            </span>
+        </div>
+        {% endfor %}
+        
+        {% if not players %}
+        <div style="padding: 20px; text-align: center;">
+            No players added yet.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+```

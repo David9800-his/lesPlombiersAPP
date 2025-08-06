@@ -1,0 +1,56 @@
+## templates/admin/add_news.html
+```html
+{% extends "base.html" %}
+
+{% block title %}Add News - Les Plombiers{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h2>ADD NEWS POST</h2>
+    
+    <form method="POST" style="background-color: #ffffff; padding: 20px; border: 2px solid #808080;">
+        <h3>News Content</h3>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Title *</label>
+            <input type="text" name="title" required placeholder="e.g., Team Wins Championship!" 
+                   style="width: 100%; padding: 5px; border: 2px solid #808080;">
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Excerpt</label>
+            <textarea name="excerpt" rows="3" placeholder="Short summary for homepage display (optional)" 
+                      style="width: 100%; padding: 5px; border: 2px solid #808080;"></textarea>
+            <small style="color: #666;">If left empty, the first 150 characters of content will be used</small>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Content *</label>
+            <textarea name="content" rows="10" required placeholder="Write your news article here..." 
+                      style="width: 100%; padding: 5px; border: 2px solid #808080;"></textarea>
+        </div>
+        
+        <h3>Publishing Options</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" name="published" checked>
+                    <span>Publish immediately</span>
+                </label>
+            </div>
+            
+            <div>
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" name="featured">
+                    <span>Feature on homepage</span>
+                </label>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary">Add News Post</button>
+            <a href="{{ url_for('admin_news') }}" class="btn">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+```

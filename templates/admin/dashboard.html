@@ -1,0 +1,57 @@
+## templates/admin/dashboard.html
+```html
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Les Plombiers{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h2 style="color: #000080;">ADMIN DASHBOARD</h2>
+    <p>Welcome back, {{ current_user.username }}!</p>
+    
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-number">{{ total_players }}</div>
+            <div class="stat-label">ACTIVE PLAYERS</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ total_matches }}</div>
+            <div class="stat-label">TOTAL MATCHES</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ total_news }}</div>
+            <div class="stat-label">NEWS POSTS</div>
+        </div>
+    </div>
+    
+    <h3>Quick Actions</h3>
+    <div style="margin: 20px 0;">
+        <a href="{{ url_for('admin_add_player') }}" class="btn btn-primary">Add Player</a>
+        <a href="{{ url_for('admin_add_match') }}" class="btn btn-primary">Add Match</a>
+        <a href="{{ url_for('admin_add_news') }}" class="btn btn-primary">Add News</a>
+        <a href="{{ url_for('admin_export_players') }}" class="btn">Export Stats</a>
+    </div>
+    
+    <h3>Management</h3>
+    <div style="margin: 20px 0;">
+        <a href="{{ url_for('admin_players') }}" class="btn">Manage Players</a>
+        <a href="{{ url_for('admin_matches') }}" class="btn">Manage Matches</a>
+        <a href="{{ url_for('admin_news') }}" class="btn">Manage News</a>
+    </div>
+    
+    {% if recent_matches %}
+    <h3>Recent Matches</h3>
+    <div class="matches-list">
+        {% for match in recent_matches %}
+        <div class="match-item {{ match.result.lower() }}">
+            <strong>{{ match.date.strftime('%m/%d') }}</strong>
+            vs {{ match.opponent }}
+            <strong>{{ match.score_display }}</strong>
+            ({{ match.result }})
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+```

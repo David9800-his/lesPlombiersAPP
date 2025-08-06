@@ -1,0 +1,49 @@
+## templates/admin/news.html
+```html
+{% extends "base.html" %}
+
+{% block title %}Manage News - Les Plombiers{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>MANAGE NEWS</h2>
+        <a href="{{ url_for('admin_add_news') }}" class="btn btn-primary">Add News Post</a>
+    </div>
+    
+    <div style="background-color: #ffffff; border: 2px solid #808080;">
+        <div style="background-color: #c0c0c0; padding: 10px; font-weight: bold; display: grid; grid-template-columns: 1fr 100px 80px 80px 80px; gap: 10px;">
+            <span>Title</span>
+            <span>Author</span>
+            <span>Date</span>
+            <span>Status</span>
+            <span>Featured</span>
+        </div>
+        
+        {% for news in news_posts %}
+        <div style="padding: 10px; border-bottom: 1px solid #cccccc; display: grid; grid-template-columns: 1fr 100px 80px 80px 80px; gap: 10px; align-items: center;">
+            <span>{{ news.title }}</span>
+            <span>{{ news.author.username if news.author else 'Unknown' }}</span>
+            <span>{{ news.created_at.strftime('%m/%d/%Y') }}</span>
+            <span>
+                {% if news.published %}
+                    <span style="color: green;">Published</span>
+                {% else %}
+                    <span style="color: orange;">Draft</span>
+                {% endif %}
+            </span>
+            <span>
+                {% if news.featured %}⭐{% else %}-{% endif %}
+            </span>
+        </div>
+        {% endfor %}
+        
+        {% if not news_posts %}
+        <div style="padding: 20px; text-align: center;">
+            No news posts yet.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+```

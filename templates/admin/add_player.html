@@ -1,0 +1,113 @@
+## templates/admin/add_player.html
+```html
+{% extends "base.html" %}
+
+{% block title %}Add Player - Les Plombiers{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h2>ADD NEW PLAYER</h2>
+    
+    <form method="POST" enctype="multipart/form-data" style="background-color: #ffffff; padding: 20px; border: 2px solid #808080;">
+        <h3>Basic Information</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Name *</label>
+                <input type="text" name="name" required style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Position *</label>
+                <select name="position" required style="width: 100%; padding: 5px; border: 2px solid #808080;">
+                    <option value="">Select Position</option>
+                    <option value="Center">Center</option>
+                    <option value="Left Wing">Left Wing</option>
+                    <option value="Right Wing">Right Wing</option>
+                    <option value="Left Defense">Left Defense</option>
+                    <option value="Right Defense">Right Defense</option>
+                    <option value="Goalie">Goalie</option>
+                </select>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Jersey Number</label>
+                <input type="number" name="jersey_number" min="1" max="99" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Age</label>
+                <input type="number" name="age" min="16" max="50" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Height</label>
+                <input type="text" name="height" placeholder="e.g., 6'2&quot;" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Weight (lbs)</label>
+                <input type="number" name="weight" min="100" max="300" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Hometown</label>
+            <input type="text" name="hometown" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+        </div>
+        
+        <h3>Statistics</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Goals</label>
+                <input type="number" name="goals" min="0" value="0" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Assists</label>
+                <input type="number" name="assists" min="0" value="0" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Penalty Minutes</label>
+                <input type="number" name="penalty_minutes" min="0" value="0" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Games Played</label>
+                <input type="number" name="games_played" min="0" value="0" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Plus/Minus</label>
+                <input type="number" name="plus_minus" value="0" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+        </div>
+        
+        <h3>Media & Bio</h3>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Player Photo</label>
+            <input type="file" name="image" accept="image/*" style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            <small style="color: #666;">Accepted formats: PNG, JPG, JPEG, GIF (max 16MB)</small>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Biography</label>
+            <textarea name="bio" rows="4" placeholder="Player biography, achievements, etc." 
+                      style="width: 100%; padding: 5px; border: 2px solid #808080;"></textarea>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" name="is_featured">
+                <span>Feature in homepage carousel</span>
+            </label>
+        </div>
+        
+        <div style="display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary">Add Player</button>
+            <a href="{{ url_for('admin_players') }}" class="btn">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+```

@@ -1,0 +1,51 @@
+## templates/index.html
+```html
+{% extends "base.html" %}
+
+{% block content %}
+<div class="welcome-banner">
+    <h2>WELCOME TO THE RINK!</h2>
+    <p>Your one-stop destination for Les Plombiers hockey statistics and news!</p>
+</div>
+
+<!-- Team Stats Section -->
+{% if team_stats %}
+<div id="stats">
+    <h3>TEAM STATISTICS</h3>
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-number">{{ team_stats.total_goals or 0 }}</div>
+            <div class="stat-label">TOTAL GOALS</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ team_stats.total_assists or 0 }}</div>
+            <div class="stat-label">TOTAL ASSISTS</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ team_stats.total_points or 0 }}</div>
+            <div class="stat-label">TOTAL POINTS</div>
+        </div>
+        {% if team_stats.top_scorer %}
+        <div class="stat-box">
+            <div class="stat-number">{{ team_stats.top_scorer.name }}</div>
+            <div class="stat-label">TOP SCORER ({{ team_stats.top_scorer.goals }} GOALS)</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Player Carousel -->
+{% if featured_players %}
+<div id="players">
+    <h3>FEATURED PLAYERS</h3>
+    <div class="player-carousel">
+        {% for player in featured_players %}
+        <div class="player-card {% if loop.first %}active{% endif %}">
+            <div class="player-image">
+                <img src="{{ player.image_url }}" alt="{{ player.name }}" onerror="this.src='/static/images/default_player.png'">
+            </div>
+            <div class="player-info">
+                <h4>{{ player.name }}</h4>
+                <p>#{{ player.jersey_number or 'N/A' }} • {{ player.position }}</p>
+                <div class="player-stats

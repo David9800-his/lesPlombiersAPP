@@ -1,0 +1,68 @@
+## templates/admin/add_match.html
+```html
+{% extends "base.html" %}
+
+{% block title %}Add Match - Les Plombiers{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h2>ADD NEW MATCH</h2>
+    
+    <form method="POST" style="background-color: #ffffff; padding: 20px; border: 2px solid #808080;">
+        <h3>Match Information</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Game Date *</label>
+                <input type="date" name="date" required style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Opponent *</label>
+                <input type="text" name="opponent" required placeholder="e.g., Montreal Canadiens" 
+                       style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Venue</label>
+                <input type="text" name="venue" placeholder="e.g., Bell Centre" 
+                       style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" name="home_game" checked>
+                    <span>Home Game</span>
+                </label>
+            </div>
+        </div>
+        
+        <h3>Score</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Les Plombiers Score *</label>
+                <input type="number" name="our_score" min="0" value="0" required 
+                       style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Opponent Score *</label>
+                <input type="number" name="opponent_score" min="0" value="0" required 
+                       style="width: 100%; padding: 5px; border: 2px solid #808080;">
+            </div>
+        </div>
+        
+        <h3>Additional Information</h3>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Notes</label>
+            <textarea name="notes" rows="4" placeholder="Game highlights, key plays, injuries, etc." 
+                      style="width: 100%; padding: 5px; border: 2px solid #808080;"></textarea>
+        </div>
+        
+        <div style="display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary">Add Match</button>
+            <a href="{{ url_for('admin_matches') }}" class="btn">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+```
